@@ -198,13 +198,32 @@ body.night .nav-link:hover{background:rgba(255,245,157,.22)}
 body.night #themeBtn .i-sun{opacity:0}
 body.night #themeBtn .i-moon{opacity:1}
 
-/* ---------- Hero 头部横幅 ---------- */
-#hero{position:relative;z-index:5;min-height:72vh;display:flex;align-items:center;
-  justify-content:center;gap:40px;padding:130px 24px 60px;flex-wrap:wrap;overflow:hidden}
+/* ---------- Hero 头部横幅（首页 · 独立一页） ---------- */
+#hero{position:relative;z-index:5;min-height:100vh;min-height:100dvh;display:flex;align-items:center;
+  justify-content:center;gap:40px;padding:130px 24px 104px;flex-wrap:wrap;overflow:hidden}
 .hero-text{max-width:560px;text-align:center}
 .hero-text h1{font-size:clamp(30px,5.6vw,52px);letter-spacing:3px;line-height:1.3;
-  color:var(--ink);text-shadow:2px 2px 0 rgba(244,143,177,.32),1px 1px 0 rgba(0,0,0,.1);
-  animation:popIn .8s cubic-bezier(.34,1.56,.64,1) backwards}
+  color:var(--ink);text-shadow:2px 2px 0 rgba(244,143,177,.32),1px 1px 0 rgba(0,0,0,.1)}
+.hero-text h1 .hw{display:inline-block;animation:popIn .65s cubic-bezier(.34,1.56,.64,1) backwards}
+.hero-text h1 .hw>b{display:inline-block;font-weight:inherit;animation:hwave 3.6s ease-in-out infinite}
+.hw:nth-child(1){animation-delay:.06s}.hw:nth-child(2){animation-delay:.12s}
+.hw:nth-child(3){animation-delay:.18s}.hw:nth-child(4){animation-delay:.24s}
+.hw:nth-child(5){animation-delay:.30s}.hw:nth-child(6){animation-delay:.36s}
+.hw:nth-child(7){animation-delay:.42s}.hw:nth-child(8){animation-delay:.48s}
+.hw:nth-child(9){animation-delay:.54s}
+.hw:nth-child(1)>b{animation-delay:0s}.hw:nth-child(2)>b{animation-delay:.4s}
+.hw:nth-child(3)>b{animation-delay:.8s}.hw:nth-child(4)>b{animation-delay:1.2s}
+.hw:nth-child(5)>b{animation-delay:1.6s}.hw:nth-child(6)>b{animation-delay:2s}
+.hw:nth-child(7)>b{animation-delay:2.4s}.hw:nth-child(8)>b{animation-delay:2.8s}
+.hw:nth-child(9)>b{animation-delay:3.2s}
+@keyframes hwave{0%,12%{transform:translateY(0)}6%{transform:translateY(-12px)}}
+.scroll-cue{position:absolute;left:0;right:0;bottom:20px;display:flex;justify-content:center;
+  align-items:center;gap:9px;font-size:13px;letter-spacing:2px;color:var(--mid);
+  animation:floatY 2.4s ease-in-out infinite;white-space:nowrap}
+.scroll-cue i{width:7px;height:7px;background:var(--pink);flex:none;transform:rotate(45deg);
+  animation:cueDrop 1.4s ease-in-out infinite}
+@keyframes cueDrop{0%,100%{transform:rotate(45deg) translate(0,0);opacity:.45}
+  50%{transform:rotate(45deg) translate(5px,5px);opacity:1}}
 .hero-text p{margin-top:16px;font-size:clamp(15px,2.4vw,19px);color:var(--mid);letter-spacing:1px;
   animation:popIn .8s .15s cubic-bezier(.34,1.56,.64,1) backwards}
 .hero-text .hint{margin-top:26px;font-size:13px;color:var(--mint);
@@ -224,6 +243,59 @@ body.night .hero-text .hint{color:var(--acc)}
   border-radius:2px;padding:8px 14px;font-size:14px;color:var(--ink);
   white-space:nowrap;opacity:0;transition:.35s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 #rabbitBubble.on{opacity:1;transform:translate(-50%,0) scale(1)}
+
+/* ---------- 第二页：恋爱存档点 ---------- */
+#love{position:relative;z-index:5;min-height:100vh;min-height:100dvh;display:flex;align-items:center;
+  padding:74px 24px 84px}
+.love-wrap{max-width:1120px;margin:0 auto;width:100%}
+.love-grid{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:20px;align-items:stretch}
+.love-panel{background:var(--card);border:2px solid var(--edge);border-radius:2px;
+  box-shadow:4px 4px 0 var(--edge-soft);padding:22px 20px;position:relative}
+.love-panel:nth-child(2){border-color:var(--edge2);box-shadow:4px 4px 0 var(--edge-soft2)}
+.love-panel:nth-child(3){border-color:var(--pink);box-shadow:4px 4px 0 rgba(160,106,138,.25)}
+.love-panel .tag{font-size:12px;letter-spacing:3px;margin-bottom:16px;display:inline-block}
+/* —— 此刻：双人精灵 + 实时天数 —— */
+.couple{display:flex;justify-content:center;align-items:flex-end;gap:6px}
+.couple .spr{--s:.8;transition:transform .3s ease}
+.couple .spr:nth-child(1):hover{transform:translateX(10px)}
+.couple .spr:nth-child(3):hover{transform:translateX(-10px)}
+.couple .lheart{--s:.55;animation:beat 1.3s ease-in-out infinite;align-self:center;margin:0 -4px}
+.l-now{text-align:center;margin-top:14px;font-size:15px;letter-spacing:2px;color:var(--ink)}
+.l-now b{display:inline-block;min-width:74px;font-size:46px;line-height:1;color:var(--pink);
+  margin:0 4px;text-shadow:2px 2px 0 rgba(0,0,0,.1);animation:beat 2.6s ease-in-out infinite}
+.l-clock{text-align:center;margin-top:8px;font-size:13px;letter-spacing:1px;color:var(--mid)}
+.l-next{text-align:center;margin-top:14px;padding-top:12px;font-size:13.5px;letter-spacing:1px;
+  color:var(--mint);border-top:2px dashed var(--line)}
+body.night .l-next{color:var(--acc)}
+.l-tip{margin-top:12px;font-size:12.5px;line-height:1.7;color:var(--mid);
+  background:var(--btnBg);border:2px solid var(--line);padding:9px 11px}
+/* —— 心动轨迹：垂直时间线 —— */
+.love-line{list-style:none;padding:2px 0 0 6px}
+.love-line li{position:relative;padding:0 0 20px 26px;margin-left:7px;
+  border-left:2px dashed var(--line)}
+.love-line li:last-child{border-left-color:transparent;padding-bottom:0}
+.love-line .dot{position:absolute;left:-9px;top:1px;width:16px;height:16px;flex:none;
+  background:var(--card);border:2px solid var(--edge);box-shadow:2px 2px 0 var(--edge-soft);
+  transition:background .3s,border-color .3s}
+.love-line time{display:block;font-size:12px;letter-spacing:2px;color:var(--mid)}
+.love-line b{display:block;margin-top:3px;font-size:15.5px;letter-spacing:1px;color:var(--ink)}
+.love-line .desc{display:block;margin-top:3px;font-size:12.5px;line-height:1.6;color:var(--mid)}
+.love-line li.done .dot{background:var(--pink);border-color:var(--edge2)}
+.love-line li.done b{color:var(--ink)}
+.love-line li.next .dot{background:var(--mint);border-color:var(--edge);
+  animation:beat 1.6s ease-in-out infinite}
+.love-line li.next b{color:var(--mint)}
+body.night .love-line li.next b{color:var(--acc)}
+.love-line li.lock{opacity:.5}
+/* —— 糖分记录：甜蜜时刻小卡 —— */
+.sweet{position:relative;background:rgba(255,255,255,.55);border:2px solid var(--line);
+  padding:12px 14px;margin-bottom:12px;transition:transform .25s,box-shadow .25s}
+body.night .sweet{background:rgba(255,255,255,.05);border-color:var(--edge-soft2)}
+.sweet:last-child{margin-bottom:0}
+.sweet:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--edge-soft2)}
+.sweet h4{font-size:14px;letter-spacing:1.5px;color:var(--ink);margin-bottom:6px}
+.sweet h4::before{content:'♥ ';color:var(--pink)}
+.sweet p{font-size:13px;line-height:1.75;color:var(--mid)}
 
 /* ---------- 主体布局 ---------- */
 .wrap{position:relative;z-index:5;max-width:1120px;margin:0 auto;padding:10px 20px 60px;
@@ -608,8 +680,9 @@ body.night .detail-nav a{color:var(--acc)}
 @media (max-width:960px){
   .wrap{grid-template-columns:1fr}
   #sidebar{position:static}
-  #hero{min-height:60vh;padding-top:118px}
+  #hero{min-height:100vh;padding-top:118px}
   .hero-rabbit .spr{--s:1}
+  .love-grid{grid-template-columns:1fr}
   .wl2{display:none}                       /* 窄屏减少背景元素 */
   .b3{display:none}
 }
@@ -639,6 +712,10 @@ body.night .detail-nav a{color:var(--acc)}
   .prose{font-size:15px}
   .prose h2{font-size:17.5px}
   .detail-foot{flex-direction:column;align-items:flex-start;gap:14px}
+  #love{padding:56px 16px 64px}
+  .l-now b{font-size:38px}
+  .couple .spr{--s:.7}
+  .scroll-cue{font-size:12px;letter-spacing:1px}
 }
 
 /* ============================================================
@@ -776,6 +853,7 @@ body.night .detail-nav a{color:var(--acc)}
   <span id="companion" class="spr"><i></i></span>
   <nav class="nav-links">
     <a class="nav-link" href="#top">首页<span class="spr peek" data-spr="cat" data-day="cat-idle"><i class="s-cat-idle"></i></span></a>
+    <a class="nav-link" href="#love">恋爱存档<span class="spr peek" data-spr="bird" data-day="bird-idle"><i class="s-bird-idle"></i></span></a>
     <a class="nav-link" href="#posts">归档<span class="spr peek" data-spr="dog" data-day="dog-idle"><i class="s-dog-idle"></i></span></a>
     <a class="nav-link" href="#about">关于<span class="spr peek" data-spr="rabbit" data-day="rabbit-idle"><i class="s-rabbit-idle"></i></span></a>
     <a class="nav-link" href="#friends">友情链接<span class="spr peek" data-spr="fox" data-day="fox-idle"><i class="s-fox-idle"></i></span></a>
@@ -786,16 +864,70 @@ body.night .detail-nav a{color:var(--acc)}
   </button>
 </header>
 
-<!-- 头部横幅 Hero -->
+<!-- 头部横幅 Hero（首页 · 独立一页） -->
 <section id="hero" data-top>
   <div class="hero-text">
-    <h1>欢迎来到我的小角落</h1>
+    <h1><span class="hw"><b>欢</b></span><span class="hw"><b>迎</b></span><span class="hw"><b>来</b></span><span class="hw"><b>到</b></span><span class="hw"><b>我</b></span><span class="hw"><b>的</b></span><span class="hw"><b>小</b></span><span class="hw"><b>角</b></span><span class="hw"><b>落</b></span></h1>
     <p>记录生活、代码与那些毛茸茸的瞬间</p>
     <div class="hint">点一点右边的小兔子 · 它会悄悄回你一句话</div>
   </div>
   <div class="hero-rabbit" id="heroRabbit" title="戳我戳我">
     <span id="rabbitBubble"></span>
     <span class="spr ears" data-spr="rabbit" data-day="rabbit-idle" data-alts="rabbit-hop,rabbit-happy"><i class="s-rabbit-idle"></i></span>
+  </div>
+  <div class="scroll-cue">向下滑动 · 翻开第二页<i></i></div>
+</section>
+
+<!-- 第二页：恋爱存档点 -->
+<section id="love">
+  <div class="love-wrap">
+    <div class="section-title">
+      <span class="spr"><i class="s-heart"></i></span>
+      恋爱存档点
+    </div>
+    <div class="section-sub">SAVE ♥ · 从 2026.03.15 开始，和你的每一天都在自动存档</div>
+    <div class="love-grid">
+
+      <div class="love-panel">
+        <span class="tag">此刻</span>
+        <div class="couple">
+          <span class="spr" data-spr="cat" data-day="cat-idle" data-alts="cat-wink"><i class="s-cat-idle"></i></span>
+          <span class="spr lheart"><i class="s-heart"></i></span>
+          <span class="spr" data-spr="dog" data-day="dog-idle" data-alts="dog-happy"><i class="s-dog-idle"></i></span>
+        </div>
+        <p class="l-now">在一起的第 <b id="loveDays">—</b> 天</p>
+        <p class="l-clock" id="loveClock">正在同步心跳…</p>
+        <p class="l-next" id="loveNext">正在读取存档…</p>
+        <p class="l-tip">系统提示：检测到长期高甜度恋爱，甜度持续超标，建议升级为终身存档。</p>
+      </div>
+
+      <div class="love-panel">
+        <span class="tag">心动轨迹</span>
+        <ol class="love-line" id="loveLine">
+          <li data-date="2026-03-15"><span class="dot"></span><time>2026.03.15</time><b>我们在一起了</b><span class="desc">故事从这一天开始存档</span></li>
+          <li data-date="2026-06-22"><span class="dot"></span><time>2026.06.22</time><b>第 100 天</b><span class="desc">一百天快乐，甜度持续上升</span></li>
+          <li data-date="2026-09-30"><span class="dot"></span><time>2026.09.30</time><b>第 200 天</b><span class="desc">秋天里的第 200 次心动</span></li>
+          <li data-date="2027-03-15"><span class="dot"></span><time>2027.03.15</time><b>一周年</b><span class="desc">第一个 365 天，未完待续</span></li>
+        </ol>
+      </div>
+
+      <div class="love-panel">
+        <span class="tag">糖分记录</span>
+        <div class="sweet">
+          <h4>存档键</h4>
+          <p>2026.03.15，我把「以后的每一天都想和你一起」这个愿望，郑重地按下了存档键。</p>
+        </div>
+        <div class="sweet">
+          <h4>日常糖分</h4>
+          <p>一起吃饭、一起散步、一起把普通的日子，过成闪闪发光的日子。</p>
+        </div>
+        <div class="sweet">
+          <h4>下一关</h4>
+          <p>故事还在继续，未来的每一个存档点，我们都一个一个点亮。</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -1804,6 +1936,7 @@ function stageIn(sel, step, base) {
 }
 stageIn('#zoo .zoo-cell', 90, 100);
 stageIn('#footerRow .foot-item', 130, 0);
+stageIn('#love .love-panel', 130, 0);
 /* 爪印不做入场动画：.enter 动画在带静态 rotate 的 .spr 上完成后，
    合成层会停止绘制该元素（计算样式正常但像素消失），爪印静态显示 */
 $$('.widget').forEach((w, i) => {
@@ -1813,10 +1946,43 @@ $$('.widget').forEach((w, i) => {
 });
 
 /* 锚点滚动留出导航高度 */
-['#hero', '#posts', '#about', '#friends'].forEach(s => {
+['#hero', '#love', '#posts', '#about', '#friends'].forEach(s => {
   const el = $(s);
   if (el) el.style.scrollMarginTop = '86px';
 });
+
+/* ============================================================
+   恋爱存档点：在一起天数 / 实时秒针 / 存档点状态与倒计时
+   ============================================================ */
+const LOVE_START = new Date(2026, 2, 15);          /* 2026-03-15 在一起 */
+const loveDaysEl = $('#loveDays'), loveClockEl = $('#loveClock'), loveNextEl = $('#loveNext');
+function tickLove() {
+  const now = new Date();
+  const ms = now - LOVE_START;
+  if (ms < 0 || !loveDaysEl) return;
+  const d = Math.floor(ms / 864e5);
+  loveDaysEl.textContent = d + 1;                   /* 当天算第 1 天 */
+  const h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4),
+        s = Math.floor(ms % 6e4 / 1000);
+  loveClockEl.textContent = '牵着手走过了 ' + d + ' 天 ' + h + ' 小时 ' + m + ' 分 ' + s + ' 秒';
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let countdown = '';
+  $$('#loveLine li').forEach(li => {
+    const day = new Date(li.dataset.date + 'T00:00:00');
+    const diff = Math.round((day - today) / 864e5);
+    li.classList.remove('done', 'next', 'lock');
+    if (diff <= 0) li.classList.add('done');
+    else if (!countdown) {
+      li.classList.add('next');
+      countdown = li.querySelector('b').textContent + ' · 还有 ' + diff + ' 天';
+    } else li.classList.add('lock');
+  });
+  loveNextEl.textContent = countdown
+    ? '下一个存档点：' + countdown
+    : '轨迹上的存档点已全部点亮';
+}
+tickLove();
+setInterval(tickLove, 1000);
 
 /* ---------- 初始化 ---------- */
 refreshAllAnimals();
