@@ -38,6 +38,19 @@ const C = {
   glass: '#2f3b52',
   scarf: '#ef5350',
   iris: '#ff9e4a',
+  cheek: '#f7e3a8',  // brownie 脸颊奶黄斑
+  bEye: '#6d4c41',   // brownie 深棕大眼
+  bEyeD: '#4e342e',
+  bNose: '#8d6e63',  // brownie 小棕鼻
+  arm: '#b7a99b',    // 灰棕手臂
+  armD: '#9e948a',
+  bibHi: '#fbd3e2',  // 粉围兜高光
+  bibD: '#ec6f99',   // 粉围兜暗部
+  bbib: '#b08968',   // belle 棕围兜
+  bbibD: '#96705a',
+  bbibHi: '#d8b896',
+  bubble: '#9ec5e8', // 鼻涕泡
+  bubbleD: '#7fa8d6',
 };
 
 /* ---------- 画布 ---------- */
@@ -106,6 +119,8 @@ const P = {
   owl:     { m: '#cdb4db', l: '#f3e8ff', o: '#a98cc0' },
   hamster: { m: '#ffe0b2', l: '#fff8ec', o: '#f0c08a' },
   bird:    { m: '#9fd3ff', l: '#ffffff', o: '#6fb6ef' },
+  brownie: { m: '#c9925f', l: '#f3e2c6', o: '#a87642' },
+  belle:   { m: '#f5e9c8', l: '#fffaf0', o: '#ddc79a' },
 };
 
 /* ---------- 通用五官部件 ---------- */
@@ -832,6 +847,158 @@ F('bear-blush', [bearHead, bearBody, eyesArc(9, 19, 11), bearNose, mouthOpen(16,
                  a => { a.r(7, 16, 4, 2, C.p); a.r(21, 16, 4, 2, C.p); }]);
 F('bear-happy', [bearHead, bearBody, eyesArc(9, 19, 11), bearNose, mouthOpen(16, 17),
                  blush(8, 21, 16)]);
+
+/* —— 棕熊 brownie（男主「我」· 圆脸短吻 · 奶黄脸颊斑 · 深棕大眼无镜框 ·
+      抱胸手臂 · 粉围兜梯形 · 坐姿小脚，头 y6-19 / 身体 y20-29 与 dog-idle 对齐） —— */
+/* 深棕大眼：3x4 圆角块 + 白色小高光（参考 owl 的眼层次，但无任何外框/镜腿） */
+const brownieEye = (x, y) => a => {
+  a.r(x + 1, y, 1, 1, C.bEye);
+  a.r(x, y + 1, 3, 2, C.bEye);
+  a.r(x + 1, y + 3, 1, 1, C.bEyeD);      // 下缘深一阶，做出眼的层次
+  a.set(x + 1, y + 1, C.w);
+  a.set(x + 2, y + 2, C.w);              // 两粒白色高光
+};
+const brownieHead = a => {
+  const p = P.brownie;
+  a.blob(6, 3, 6, 6, p.m, 2); a.r(8, 4, 2, 2, p.l);        // 左圆耳 + 浅色内耳
+  a.blob(20, 3, 6, 6, p.m, 2); a.r(22, 4, 2, 2, p.l);      // 右圆耳
+  a.blob(7, 6, 18, 14, p.m, 3);                            // 大圆脸 x7..24 y6..19
+  /* 脸颊两侧奶黄斑（4x5 圆角块，眼尾外侧偏下，最醒目的花纹） */
+  a.r(7, 15, 4, 3, C.cheek); a.r(8, 14, 2, 1, C.cheek); a.r(8, 18, 2, 1, C.cheek);
+  a.r(21, 15, 4, 3, C.cheek); a.r(22, 14, 2, 1, C.cheek); a.r(22, 18, 2, 1, C.cheek);
+};
+const brownieNose = a => {                                  // 小棕鼻 + 一个浅色高光点
+  a.r(14, 15, 4, 2, C.bNose); a.set(14, 15, P.brownie.l);
+};
+const brownieFace = a => {
+  brownieEye(10, 10)(a); brownieEye(19, 10)(a);            // 双大眼（对称中心 x15.5）
+  brownieNose(a);
+  mouthW(16, 17)(a);                                        // 浅浅的 ω 微笑嘴（不吐舌）
+  a.r(8, 16, 3, 2, C.n); a.r(21, 16, 3, 2, C.n);            // 眼睛外侧下方的粉腮红
+};
+const brownieBody = a => {                                  // 坐姿身体（y20..28，描边后到 29）
+  const p = P.brownie;
+  a.r(11, 20, 10, 1, p.m); a.r(10, 21, 12, 1, p.m);
+  a.r(9, 22, 14, 5, p.m); a.r(8, 27, 16, 2, p.m);
+};
+const BIB_ROWS = [                                          // 上宽 15 → 收至 7 → 底尖 5
+  [9, 20, 15], [9, 21, 15], [10, 22, 13], [11, 23, 11],
+  [12, 24, 9], [13, 25, 7], [13, 26, 7], [14, 27, 5]
+];
+const bibPaint = (main, dark, hi) => a => {                  // 梯形口水巾（上宽下窄）
+  BIB_ROWS.forEach(([x, y, w]) => {
+    a.r(x, y, w, 1, main);
+    a.r(x + w - 2, y, 2, 1, dark);                          // 右侧暗部
+    if (y <= 21) a.r(x, y, 2, 1, hi);                       // 左上高光
+  });
+};
+const brownieBib = a => {                                   // 粉围兜 + 兜面白花小方块
+  bibPaint(C.p, C.bibD, C.bibHi)(a);
+  [[12, 20], [18, 20], [13, 21], [17, 21],
+   [14, 24], [18, 24], [15, 25], [14, 26]]
+    .forEach(([x, y]) => a.set(x, y, '#fffaf0'));
+};
+const armPaint = (m, d, l) => a => {                        // 双臂横抱身前、在围兜上方交叠
+  a.r(20, 21, 5, 3, m);                                    // 右肩 + 右前臂（先画，被左臂压住）
+  a.r(15, 22, 6, 2, m);
+  a.r(7, 21, 5, 3, m);                                     // 左肩 + 左前臂（后画 → 交叠在右臂上）
+  a.r(11, 22, 6, 2, m);
+  a.set(17, 22, d);                                        // 交叠分界：左臂压在右臂上的投影
+  a.r(7, 23, 10, 1, d); a.r(17, 23, 8, 1, d);              // 手臂下缘阴影
+  a.set(14, 23, l); a.set(15, 23, l);                      // 左爪爪垫
+  a.set(17, 23, l); a.set(18, 23, l);                      // 右爪爪垫
+};
+const brownieArms = a => armPaint(C.arm, C.armD, P.brownie.l)(a);
+const brownieFeet = a => {                                  // 底部两只小脚（与 dog-idle 齐平）
+  a.r(11, 27, 4, 2, P.brownie.l); a.r(17, 27, 4, 2, P.brownie.l);
+};
+const brownieFaceHappy = a => {                             // 眯眼 ⌒ 笑，腮红更明显
+  eyesArc(9, 19, 10)(a);
+  brownieNose(a);
+  mouthSmile(16, 17, 3)(a);
+  a.r(8, 16, 3, 2, C.p); a.r(21, 16, 3, 2, C.p);
+};
+const brownieFaceBlush = a => {                             // 保持睁眼，脸更红
+  brownieEye(10, 10)(a); brownieEye(19, 10)(a);
+  brownieNose(a);
+  mouthSmile(16, 17, 3)(a);
+  a.r(8, 15, 4, 3, C.p); a.r(20, 15, 4, 3, C.p);
+};
+const brownieFaceSleep = a => {                             // 闭眼 + 复用紫睡帽 + zzz
+  eyesShut(9, 19, 10)(a);
+  brownieNose(a);
+  mouthW(16, 17)(a);
+  a.r(8, 16, 3, 2, C.n); a.r(21, 16, 3, 2, C.n);
+};
+const brownieBase = f => [brownieHead, brownieBody, brownieBib, brownieArms, f, brownieFeet];
+F('brownie-idle',  brownieBase(brownieFace));
+F('brownie-happy', brownieBase(brownieFaceHappy));
+F('brownie-blush', brownieBase(brownieFaceBlush));
+F('brownie-sleep', brownieBase(brownieFaceSleep).concat([nightcap(9), zzz]));
+
+/* —— 奶油熊 belle（女主「她」· 闭眼打瞌睡 · 鼻侧鼻涕泡 · 棕围兜 · 体型与 brownie 一致） —— */
+const belleShut = (xl, xr, y) => a => {                     // 暖棕灰闭眼弧线（柔和非黑）
+  const c = P.belle.o;
+  a.r(xl, y + 3, 4, 1, c); a.r(xr, y + 3, 4, 1, c);
+  a.set(xl, y + 2, c); a.set(xl + 3, y + 2, c);
+  a.set(xr, y + 2, c); a.set(xr + 3, y + 2, c);
+};
+const belleArc = (xl, xr, y) => a => {                      // 弯弯的笑眼 ⌒
+  const c = P.belle.o;
+  [xl, xr].forEach(x => {
+    a.set(x, y + 1, c); a.r(x + 1, y, 2, 1, c); a.set(x + 3, y + 1, c);
+  });
+};
+const belleHead = a => {
+  const p = P.belle;
+  a.blob(6, 3, 6, 6, p.m, 2); a.r(8, 4, 2, 2, C.n);        // 圆耳 + 粉内耳
+  a.blob(20, 3, 6, 6, p.m, 2); a.r(22, 4, 2, 2, C.n);
+  a.blob(7, 6, 18, 14, p.m, 3);                             // 奶油大圆脸（蓝色绝不画眼睛）
+};
+const belleBubble = a => {                                  // 鼻侧打瞌睡鼻涕泡（贴鼻不进脸颊中央）
+  a.r(18, 16, 1, 1, C.bubbleD); a.r(18, 17, 1, 1, C.bubbleD); // 中蓝小泡串连到鼻侧
+  a.r(19, 17, 2, 2, C.bubble);                              // 浅蓝主泡
+  a.set(19, 17, C.w);                                       // 白色高光
+};
+const belleFace = a => {
+  belleShut(9, 19, 10)(a);                                  // 闭眼瞌睡
+  a.r(14, 15, 4, 2, C.p);                                   // 小粉鼻
+  a.set(15, 17, C.k); a.set(16, 18, C.k); a.set(17, 17, C.k);// 安静的小嘴
+  a.r(8, 16, 3, 2, C.n); a.r(21, 16, 3, 2, C.n);            // 粉腮红
+  belleBubble(a);
+};
+const belleBody = a => {                                    // 坐姿身体（与 brownie 同尺寸）
+  const p = P.belle;
+  a.r(11, 20, 10, 1, p.m); a.r(10, 21, 12, 1, p.m);
+  a.r(9, 22, 14, 5, p.m); a.r(8, 27, 16, 2, p.m);
+};
+const belleBib = a => {                                     // 棕围兜 + 少量奶白小方块
+  bibPaint(C.bbib, C.bbibD, C.bbibHi)(a);
+  [[13, 20], [18, 20], [15, 24], [16, 25], [14, 26]]
+    .forEach(([x, y]) => a.set(x, y, P.belle.l));
+};
+const belleArms = a => armPaint(P.belle.o, darken(P.belle.o, 0.85), P.belle.l)(a);
+const belleFeet = a => {
+  a.r(11, 27, 4, 2, P.belle.l); a.r(17, 27, 4, 2, P.belle.l);
+};
+const belleFaceHappy = a => {                               // 被逗醒的甜笑：弯弯笑眼、泡消失
+  belleArc(9, 19, 10)(a);
+  a.r(14, 15, 4, 2, C.p);
+  mouthSmile(16, 17, 3)(a);
+  a.r(8, 16, 3, 2, C.n); a.r(21, 16, 3, 2, C.n);
+};
+const belleFaceBlush = a => {                               // 闭眼 + 大粉腮红 + 泡缩小保留
+  belleShut(9, 19, 10)(a);
+  a.r(14, 15, 4, 2, C.p);
+  a.set(15, 17, C.k); a.set(16, 18, C.k); a.set(17, 17, C.k);
+  a.r(7, 15, 4, 3, C.n); a.r(21, 15, 4, 3, C.n);            // 大粉腮红（贴脸缘，与鼻隔开 3 格不糊成一条）
+  a.r(18, 16, 1, 1, C.bubbleD); a.r(19, 17, 1, 1, C.bubble);// 缩小的鼻涕泡
+};
+const belleBase = f => [belleHead, belleBody, belleBib, belleArms, f, belleFeet];
+F('belle-idle',  belleBase(belleFace));
+F('belle-happy', belleBase(belleFaceHappy));
+F('belle-blush', belleBase(belleFaceBlush));
+F('belle-sleep', belleBase(belleFace));                     // 夜间直接复用闭眼泡组合
 
 /* —— 青蛙 —— */
 const frogSleep = a => {

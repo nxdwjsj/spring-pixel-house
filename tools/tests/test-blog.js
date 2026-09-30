@@ -65,7 +65,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok(!$('#posts #friends') && d.querySelectorAll('#footer .friend').length === 4,
     '主内容区无大友链板块，页脚 4 个小链接');
   ok(!!$('#sidebar #about-her'), '侧栏「关于她」板块存在');
-  ok($('#about-her').textContent.includes('很努力、很可爱、很脆弱又很坚强'), '她的介绍文案');
+  ok($('#about-her').textContent.includes('她是我一个人的小太阳，漂漂亮亮地挂在我世界的天上'), '她的介绍文案');
 
   console.log('\n[2] 阅读页路由（回归：不再跳到恋爱存档点）');
   w.location.hash = '#/post/rainy-math';
