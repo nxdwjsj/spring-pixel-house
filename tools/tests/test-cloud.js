@@ -79,9 +79,14 @@ function router(url, opts) {
   ok(S.posts.length === 1 && S.posts[0].slug === 'cloud-post', '渲染云端文章（种子不覆盖已有数据）');
   ok($$('#postGrid .card').length === 1 && $('#postGrid .card').dataset.animal === 'owl', '卡片动物 owl');
   ok($('#postGrid .card').classList.contains('t-sky'), '主题色 t-sky');
-  ok($$('#loveLine li').length === 1 && !$$('#loveLine li[data-date]').length &&
-    !!$('#annivList .anniv-empty') && !!$('#memList .mem-empty'),
-    '云端空爱档 → 占位/空态文案（不显示静态种子）');
+  ok($$('#loveLine li').length === 7 && $$('#loveLine li[data-date]').length === 7,
+    '云端空爱档 → 自动补齐 7 条种子轨迹', '实际 ' + $$('#loveLine li').length);
+  ok($$('#annivList .anniv').length === 4 &&
+    $$('#annivList .anniv').some(a => a.dataset.lunar === '08-15'),
+    '种子纪念日补齐（含中秋农历）', '实际 ' + $$('#annivList .anniv').length);
+  ok($$('#memList .sweet').length === 3, '种子便签补齐 3 张');
+  ok(S.love.v === 2, '合并后打上种子版本号 v=2', 'v=' + S.love.v);
+  ok(!$('#loveNext').textContent.includes('NaN'), '下一个存档点无 NaN', $('#loveNext').textContent);
   ok(!!$('#albumGrid .album-item') && $$('#albumGrid .album-item').length === 1, '云端相册 1 张');
 
   console.log('\n[2] 云端访客');

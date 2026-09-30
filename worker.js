@@ -177,6 +177,8 @@ async function adminLove(request, env) {
   const msSrc = Array.isArray(input.milestones) ? input.milestones : [];
   const anSrc = Array.isArray(input.anniversaries) ? input.anniversaries : [];
   const love = {
+    /* 种子合并版本号（前端据此判断是否要把新种子补进旧存档） */
+    v: Number.isInteger(input.v) && input.v >= 0 ? input.v : 0,
     milestones: msSrc.slice(0, 120).map(x => withLunar({
       date: txt(x && x.date, 40),
       title: txt(x && x.title, 120),
@@ -242,6 +244,7 @@ export default {
           getJSON(env, 'love', null), getJSON(env, 'photos', [])
         ]);
         return json({
+          v: (love && love.v) || 0,
           milestones: (love && love.milestones) || [],
           anniversaries: (love && love.anniversaries) || [],
           memories: (love && love.memories) || [],

@@ -97,6 +97,7 @@ ok(r.status === 404, '再删 404');
 
 console.log('\n[5] 管理恋爱存档');
 const love = {
+  v: 2,
   milestones: [
     { date: '2026-03-15', title: '在一起', desc: '开始' },
     { date: '', title: '第 520 天', desc: '', days: 520 },
@@ -117,6 +118,7 @@ d = await json(r);
 ok(d.milestones.length === 5 && d.anniversaries.length === 2 && d.memories.length === 1,
   '非法条目被过滤', JSON.stringify(d.milestones) + JSON.stringify(d.anniversaries));
 ok(d.anniversaries[0].yearly === true, 'yearly 保留');
+ok(d.v === 2, '种子版本号 v 保留', 'v=' + d.v);
 ok(d.milestones.some(m => m.days === 520), 'days 天数保留', JSON.stringify(d.milestones));
 ok(d.milestones.some(m => m.lunar === '08-15' && m.leap === true), 'lunar/leap 保留');
 ok(d.milestones.every(m => !('days' in m) || m.days >= 1), 'days:0 不落库');

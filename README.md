@@ -137,6 +137,8 @@
 
 **天气数据说明（如实）**：侧栏「今日天气」**不是真实气象数据**，而是按本地时间小时段模拟的趣味效果：0-6 时夜、6-12 时晴（墨镜）、12-17 时多云、17-20 时黄昏、20-24 时雨（荷叶伞）；装扮、色罩、文字随之切换。若要真实天气需接入气象 API（需 API key 与网络请求，见 6 待办 #6）。
 
+**旧存档合并（种子不被顶掉）**：云端/本地已有站长保存过的恋爱存档时，`GET /api/love` 会在 1-2 秒后渲染，把静态种子顶掉（表现为「刷新先看到新界面、随后变回旧数据」）。修复：`mergeLoveSeeds()` 按标题把本轮新增的种子条目（520/二周年/1314/中秋等）补进旧存档，打版本号 `v=2`（种子版本 `LOVE_SEED_V`，随 `saveLove` 落盘 KV/localStorage）；站长已有数据优先、手动删除过的种子条目不会复活。回归：`test-cloud` 空档补齐断言、`test-blog` v 落盘断言。
+
 ### 3.2 新增：文章详情视图
 
 前身项目"像素爪印"有完整的文章页，本项目原本没有——6 篇卡片的"阅读全文"是死链接（`href="#posts"`）。本轮补上：
@@ -208,7 +210,7 @@ node tools/gen-sprites.js   # 改动精灵时重新生成（勿手改标记区�
 | 数据 | 云端（KV key） | 本地（localStorage） |
 |---|---|---|
 | 文章 | `posts`（[{slug,title,date,tags,summary,body(md),animal,theme,deco}]） | `pf-posts` |
-| 恋爱存档 | `love`（{milestones[{date,title,desc,days?,lunar?,leap?}],anniversaries[{date,title,note,yearly,lunar?,leap?}],memories}） | `pf-love`（含 photos） |
+| 恋爱存档 | `love`（{v(种子版本),milestones[{date,title,desc,days?,lunar?,leap?}],anniversaries[{date,title,note,yearly,lunar?,leap?}],memories}） | `pf-love`（含 photos） |
 | 相册 | `photos`（[{id,date,caption,data(base64)}]，≤60 张、单张 ≤1.5MB） | `pf-love.photos` |
 | 访客 | `visitors`（{total,unique,recent[],vids{}}，不存 IP） | `pf-visits` + `pf-vrecent` |
 | 管理密钥 | 请求头 `X-Admin-Key` ← 环境变量 `ADMIN_KEY`（secret） | `pf-adminkey`（仅本机） |
@@ -232,6 +234,7 @@ node tools/gen-sprites.js   # 改动精灵时重新生成（勿手改标记区�
 | 5 | 站长模式真实浏览器点检（发文章/相册上传视觉） | ⏳ 自动化已覆盖逻辑，视觉需部署后自查 |
 | 6 | （可选）接入真实天气 API 替换时段模拟天气 | ⏳ 待决策：需选型（如和风/Open-Meteo，免费额度）+ API key + 前端请求；见 3.6 |
 | 7 | 站长手动点检：轨迹目标日高亮 / 农历倒计时文案（365 天后才到的条目属正常） | ⏳ 自动化已覆盖，建议部署后自查视觉 |
+| 8 | 清理旧 worker `spring-pixel-house.*.workers.dev`（旧版含「还有 NaN 天」bug，最新版只在 `anloveli`） | ⏳ `npx wrangler delete spring-pixel-house`，需用户决定 |
 
 ### 6.1 部署方案（Cloudflare Workers + KV，推荐）
 

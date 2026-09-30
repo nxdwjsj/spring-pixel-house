@@ -92,6 +92,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     mid && mid.querySelector('time').textContent);
   ok(mid && /还有 \d+ 天（今年 \d+月\d+日）/.test(mid.querySelector('.d-day').textContent),
     '农历倒计时带今年公历日期', mid && mid.querySelector('.d-day').textContent);
+  ok(!$('#loveNext').textContent.includes('NaN'), '下一个存档点无 NaN', $('#loveNext').textContent);
+  ok(S.love.v === 2, '种子版本号 v=2（避免旧存档顶掉新种子）', 'v=' + S.love.v);
 
   console.log('\n[4] 真实访客（本地降级）');
   await sleep(100);
@@ -215,6 +217,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok(saved && saved.anniversaries.length === 6, 'localStorage 已写入 pf-love');
   ok(saved && saved.anniversaries.some(a => a.lunar === '01-01') &&
     saved.milestones.some(m => m.days === 300), 'lunar / days 字段已落盘');
+  ok(saved && saved.v === 2, '种子版本号 v 落盘（删除的种子不再复活）', 'v=' + (saved && saved.v));
 
   console.log('\n[10] 键盘 Esc 关闭弹窗');
   d.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));

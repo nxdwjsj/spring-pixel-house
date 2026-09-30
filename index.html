@@ -2625,6 +2625,7 @@ function seedPosts() {
   }];
 }
 /* 恋爱存档的默认内容：从静态 HTML 里读出来（站长改过则以存档为准） */
+const LOVE_SEED_V = 2;   /* 种子版本：v2 新增 520/二周年/1314/中秋 等条目 */
 function seedLove() {
   const grab = (sel, fn) => $$(sel).map(fn);
   const extra = el => {
@@ -2635,6 +2636,7 @@ function seedLove() {
     return o;
   };
   return {
+    v: LOVE_SEED_V,
     milestones: grab('#loveLine li', li => Object.assign({
       date: li.dataset.date || '',
       title: (li.querySelector('b') || {}).textContent || '',
@@ -2652,6 +2654,19 @@ function seedLove() {
     })),
     photos: []
   };
+}
+/* 旧存档合并：站长以前保存过的云端/本地数据优先，但把“本轮新增的静态种子”
+   按标题补缺进去（否则第520天/二周年/1314/中秋会被旧存档顶掉、只闪一下）。
+   合并后打版本号，站长下次保存即落盘；之后手动删除的条目不会复活。 */
+function mergeLoveSeeds(love) {
+  if (!love || typeof love !== 'object') return;
+  const seed = seedLove();
+  ['milestones', 'anniversaries', 'memories'].forEach(k => {
+    const have = Array.isArray(love[k]) ? love[k] : (love[k] = []);
+    const titles = new Set(have.map(x => x && x.title));
+    seed[k].forEach(s => { if (!titles.has(s.title)) have.push(Object.assign({}, s)); });
+  });
+  love.v = LOVE_SEED_V;
 }
 
 const Store = {
@@ -2676,7 +2691,7 @@ const Store = {
       } catch (e) { this.posts = this.seed.slice(); }
       try {
         const l = await apiJSON('/api/love');
-        this.love = { milestones: l.milestones || [], anniversaries: l.anniversaries || [],
+        this.love = { v: l.v || 0, milestones: l.milestones || [], anniversaries: l.anniversaries || [],
           memories: l.memories || [], photos: l.photos || [] };
       } catch (e) { this.love = seedLove(); }
     } else {
@@ -2685,6 +2700,7 @@ const Store = {
     }
     if (!this.love || typeof this.love !== 'object') this.love = seedLove();
     if (!Array.isArray(this.love.photos)) this.love.photos = [];
+    if (this.love.v !== LOVE_SEED_V) mergeLoveSeeds(this.love);   /* 旧存档补齐新种子 */
   },
   async persistSeeded() {
     if (!this.cloud || !this.seeded) return;
@@ -2719,7 +2735,7 @@ const Store = {
     const L = this.love;
     if (this.cloud) {
       await apiJSON('/api/admin/love', { method: 'PUT', key: this.adminKey,
-        body: JSON.stringify({ milestones: L.milestones, anniversaries: L.anniversaries, memories: L.memories }) });
+        body: JSON.stringify({ v: L.v, milestones: L.milestones, anniversaries: L.anniversaries, memories: L.memories }) });
     } else if (!LS.set('pf-love', L)) throw new Error('本地存储空间不足');
   },
   async savePhotos() {
