@@ -97,8 +97,16 @@ ok(r.status === 404, '再删 404');
 
 console.log('\n[5] 管理恋爱存档');
 const love = {
-  milestones: [{ date: '2026-03-15', title: '在一起', desc: '开始' }],
-  anniversaries: [{ date: '2027-03-15', title: '一周年', note: '第一个365', yearly: true },
+  milestones: [
+    { date: '2026-03-15', title: '在一起', desc: '开始' },
+    { date: '', title: '第 520 天', desc: '', days: 520 },
+    { date: '', title: '农历生日', desc: '', lunar: '08-15', leap: true },
+    { date: '2026-04-01', title: '缺天数', days: 0, desc: '' },
+    { date: '2026-04-02', title: '坏农历', lunar: '13-40', desc: '' }
+  ],
+  anniversaries: [
+    { date: '2027-03-15', title: '一周年', note: '第一个365', yearly: true },
+    { date: '', title: '中秋', note: '月饼节', yearly: true, lunar: '08-15', leap: false },
     { date: 'bad-date', title: '坏日期', note: '', yearly: false }],
   memories: [{ title: '便签', text: '糖分' }]
 };
@@ -106,9 +114,16 @@ r = await call('/api/admin/love', { method: 'PUT', body: love });
 ok(r.status === 200, 'PUT /api/admin/love');
 r = await call('/api/love');
 d = await json(r);
-ok(d.milestones.length === 1 && d.anniversaries.length === 1 && d.memories.length === 1,
-  '非法日期被过滤', JSON.stringify(d.anniversaries));
+ok(d.milestones.length === 5 && d.anniversaries.length === 2 && d.memories.length === 1,
+  '非法条目被过滤', JSON.stringify(d.milestones) + JSON.stringify(d.anniversaries));
 ok(d.anniversaries[0].yearly === true, 'yearly 保留');
+ok(d.milestones.some(m => m.days === 520), 'days 天数保留', JSON.stringify(d.milestones));
+ok(d.milestones.some(m => m.lunar === '08-15' && m.leap === true), 'lunar/leap 保留');
+ok(d.milestones.every(m => !('days' in m) || m.days >= 1), 'days:0 不落库');
+ok(d.milestones.find(m => m.title === '坏农历') && !d.milestones.find(m => m.title === '坏农历').lunar,
+  '非法 lunar 被剥离');
+ok(d.anniversaries.some(a => a.lunar === '08-15' && a.yearly === true),
+  '农历纪念日保留（可无公历 date）', JSON.stringify(d.anniversaries));
 r = await call('/api/admin/love', { method: 'PUT', body: null });
 ok(r.status === 400, '空体拒绝');
 

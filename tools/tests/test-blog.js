@@ -239,6 +239,44 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok(sp.dataset.cur === wxWant, 'tickClock 恢复当前天气帧', sp.dataset.cur + ' vs ' + wxWant);
   ok(sp.dataset.day === wxWant, '白天常态帧 data-day 与天气同步', sp.dataset.day + ' vs ' + wxWant);
 
+  console.log('\n[14] 农历推算：与 solarlunar 对拍 + 关键日期');
+  const sl = require('solarlunar').default;
+  let lunarDiff = 0, lunarTotal = 0;
+  for (let y = 1950; y <= 2050; y++) {
+    const lm = w.eval('lLeapMonth(' + y + ')');
+    for (let m = 1; m <= 12; m++) {
+      for (const leap of (lm === m ? [false, true] : [false])) {
+        const dim = leap ? w.eval('lLeapDays(' + y + ')') : w.eval('lMonthDays(' + y + ',' + m + ')');
+        for (let dd = 1; dd <= dim; dd++) {
+          lunarTotal++;
+          const mine = w.eval('lunar2solar(' + y + ',' + m + ',' + dd + ',' + leap + ')');
+          const lib = sl.lunar2solar(y, m, dd, leap);
+          if (lib && lib.cYear) {
+            if (!(mine && mine.y === lib.cYear && mine.m === lib.cMonth && mine.d === lib.cDay))
+              lunarDiff++;
+          } else if (mine && !(leap && dd === 30)) {
+            lunarDiff++;   /* solarlunar 对“闰月 30 天”误判无效，此处应一致为有值 */
+          }
+        }
+      }
+    }
+  }
+  ok(lunarDiff === 0, '农历对拍 solarlunar 1950-2050 全量（' + lunarTotal + ' 天）零差异',
+    'diff=' + lunarDiff);
+  ok(w.eval('isoDate(msDate({days:1}))') === '2026-03-15', '第 1 天 = 2026-03-15');
+  ok(w.eval('isoDate(msDate({days:100}))') === '2026-06-22', '第 100 天 = 2026-06-22');
+  ok(w.eval('isoDate(msDate({days:200}))') === '2026-09-30', '第 200 天 = 2026-09-30');
+  ok(w.eval('isoDate(msDate({days:520}))') === '2027-08-16', '第 520 天 = 2027-08-16');
+  ok(w.eval('isoDate(msDate({days:1314}))') === '2029-10-18', '第 1314 天 = 2029-10-18');
+  ok(/^20(2[6-9]|[3-9]\d)-09-1[45]$/.test(w.eval('isoDate(msDate({lunar:"08-15"}))')),
+    'msDate 农历推算出最近中秋（9/14-15）', w.eval('isoDate(msDate({lunar:"08-15"}))'));
+  ok(w.eval('isoDate(nextLunar(8,15,false,new Date(2026,0,1)))') === '2026-09-25',
+    '2026 年内中秋 = 2026-09-25');
+  ok(w.eval('isoDate(nextLunar(8,15,false,new Date(2026,8,30)))') === '2027-09-15',
+    '2026 中秋过后，下次中秋 = 2027-09-15');
+  ok(w.eval('lunarLabel(8,15,false)') === '农历八月十五', '农历文案');
+  ok(w.eval('lunarLabel(4,1,true)') === '农历闰四月初一', '闰月文案');
+
   console.log('\n结果: ' + pass + ' 通过, ' + fail + ' 失败');
   dom.window.close();
   process.exit(fail ? 1 : 0);
