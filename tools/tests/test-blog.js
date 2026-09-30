@@ -51,13 +51,21 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok(!!S, 'Store 已初始化');
   ok(S.cloud === false, '无后端时降级为本地模式');
   const cards = $$('#postGrid .card');
-  ok(cards.length === 1, '文章卡片 1 张', '实际 ' + cards.length);
-  ok(cards[0] && cards[0].dataset.slug === 'rainy-math', 'slug 为 rainy-math');
-  ok(cards[0] && cards[0].querySelector('.post-full').innerHTML.includes('火鸡面'), '正文含种子文章内容');
-  ok(S.posts.length === 1 && S.posts[0].body.includes('## 上午'), 'Store 种子为 Markdown 源文');
+  ok(cards.length === 2, '文章卡片 2 张（rainy-math + wind-200）', '实际 ' + cards.length);
+  const rCard = cards.find(c => c.dataset.slug === 'rainy-math');
+  const wCard = cards.find(c => c.dataset.slug === 'wind-200');
+  ok(!!rCard && !!wCard, '两张卡 slug 正确');
+  ok(rCard && rCard.querySelector('.post-full').innerHTML.includes('火鸡面'), '雨天正文含种子文章内容');
+  ok(wCard && wCard.querySelector('.post-full').innerHTML.includes('200 天') &&
+     wCard.querySelector('.post-full').innerHTML.includes('上膛长了个小泡'), '200 天文章按原文渲染');
+  ok(wCard && wCard.classList.contains('t-sky') && wCard.dataset.animal === 'bear', '200 天文章主题 t-sky + 小熊');
+  ok(S.posts.length === 2 && S.posts.find(p => p.slug === 'rainy-math' && p.body.includes('## 上午')) &&
+     S.posts.find(p => p.slug === 'wind-200' && p.body.includes('200 天')), 'Store 种子为 Markdown 源文');
   ok(!!d.querySelector('#footer #friends .friend'), '友情链接挪进页脚');
   ok(!$('#posts #friends') && d.querySelectorAll('#footer .friend').length === 4,
     '主内容区无大友链板块，页脚 4 个小链接');
+  ok(!!$('#sidebar #about-her'), '侧栏「关于她」板块存在');
+  ok($('#about-her').textContent.includes('很努力、很可爱、很脆弱又很坚强'), '她的介绍文案');
 
   console.log('\n[2] 阅读页路由（回归：不再跳到恋爱存档点）');
   w.location.hash = '#/post/rainy-math';
@@ -68,7 +76,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok($('#dTitle').textContent === '雨天、数学与火鸡面', '标题正确');
   ok($('#dBody').innerHTML.includes('肉夹馍'), '正文注入');
   ok($('#postDetail').className.includes('t-pink'), '阅读页跟随主题色 t-pink');
-  ok($('#dPrev').className === 'off' && $('#dNext').className === 'off', '只有一篇时上下篇 disabled');
+  ok($('#dPrev').className !== 'off' && $('#dNext').className === 'off', '两篇时：上一篇可用，下一篇 disabled');
   w.location.hash = '#posts';
   await sleep(150);
   ok($('#love').hidden === false, '返回列表后恋爱存档点恢复');
@@ -145,8 +153,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok($('#edBodyPreview').innerHTML.includes('<h2>小节</h2>'), '正文实时预览');
   $('#edSave').click();
   await sleep(300);
-  ok(S.posts.length === 2, '保存后 Store 有 2 篇');
-  ok($$('#postGrid .card').length === 2, '列表重渲染为 2 张卡');
+  ok(S.posts.length === 3, '保存后 Store 有 3 篇');
+  ok($$('#postGrid .card').length === 3, '列表重渲染为 3 张卡');
   ok($('#edMsg').hidden === false && $('#edMsg').className.includes('ok'), '保存成功提示');
   const newCard = $$('#postGrid .card').find(c => c.dataset.slug === 'post-');
   ok($$('#postGrid .card').some(c => c.dataset.slug.startsWith('post-')), 'slug 自动生成',
@@ -155,7 +163,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   console.log('\n[8] 管理文章：改标题 + 删除');
   $$('.tab').find(t => t.dataset.page === 'list').click();
   await sleep(50);
-  ok($$('#postAdminList .mrow').length === 2, '列表 2 行');
+  ok($$('#postAdminList .mrow').length === 3, '列表 3 行');
   const newRow = $$('#postAdminList .mrow').find(r => r.dataset.slug.startsWith('post-'));
   newRow.querySelector('[data-f="title"]').value = '改过的标题';
   $('#listSave').click();
@@ -164,8 +172,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const delRow = $$('#postAdminList .mrow').find(r => r.dataset.slug.startsWith('post-'));
   delRow.querySelector('[data-act="del"]').click();
   await sleep(300);
-  ok(S.posts.length === 1 && $$('#postGrid .card').length === 1, '删除后回到 1 篇');
-  ok(S.posts[0].slug === 'rainy-math', '保留的是 rainy-math');
+  ok(S.posts.length === 2 && $$('#postGrid .card').length === 2, '删除后回到 2 篇种子');
+  ok(!!S.posts.find(p => p.slug === 'rainy-math') && !!S.posts.find(p => p.slug === 'wind-200'),
+    '保留的是 rainy-math 与 wind-200');
 
   console.log('\n[9] 站长模式：编辑恋爱存档（公历 / 第N天 / 农历）');
   $$('.tab').find(t => t.dataset.page === 'love').click();
@@ -246,6 +255,79 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     saved.milestones.some(m => m.days === 300), 'lunar / days 字段已落盘');
   ok(saved && saved.v === 2, '种子版本号 v 落盘（删除的种子不再复活）', 'v=' + (saved && saved.v));
 
+  console.log('\n[9b] 回忆相册：合集归入 + 时间线 + 大图左右切换');
+  const GIF = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+  w.eval('Store.love.photos = [' +
+    '{id:"a1",date:"2026-09-22",caption:"贴贴",album:"",data:"' + GIF + '"},' +
+    '{id:"a2",date:"2026-09-22",caption:"散步",album:"",data:"' + GIF + '"},' +
+    '{id:"a3",date:"",caption:"盛夏",album:"生活",data:"' + GIF + '"}];' +
+    'photoDraft = Store.love.photos.map(p => Object.assign({}, p));' +
+    'renderPhotoThumbs(); renderAlbChips();');
+  $$('.tab').find(t => t.dataset.page === 'photo').click();
+  await sleep(50);
+  ok($$('#phThumbs .ph-thumb').length === 3, '站长相册 3 张缩略图');
+  ok($$('#albChips .alb-chip').length === 1, '已有合集「生活」1 个 chip');
+  /* 新建合集 → 圈 2 张 → 归入 */
+  $('#albName').value = '节日';
+  $('#albAdd').click();
+  await sleep(30);
+  ok($('#albPick').hidden === false, '新建合集进入圈选模式');
+  ok($$('#phThumbs .ph-thumb')[0].classList.contains('picking'), '缩略图进入可点选态');
+  $$('#phThumbs .ph-thumb')[0].click();
+  $$('#phThumbs .ph-thumb')[1].click();
+  ok($$('#phThumbs .ph-thumb.sel').length === 2, '圈中 2 张', '实际 ' + $$('#phThumbs .ph-thumb.sel').length);
+  ok($('#albPickOk').textContent.includes('2 张'), '按钮显示已选数量', $('#albPickOk').textContent);
+  $('#albPickOk').click();
+  await sleep(30);
+  ok($('#albPick').hidden === true, '归入后退出圈选模式');
+  ok($$('#albChips .alb-chip').length === 2, '合集 chip 变 2 个（节日 + 生活）');
+  /* 保存相册 → album 落盘 */
+  $('#phSave').click();
+  await sleep(400);
+  const L = w.eval('Store.love');
+  ok(L.photos[0].album === '节日' && L.photos[1].album === '节日' && L.photos[2].album === '生活',
+    'album 字段随相册落盘');
+  /* 访客侧：工具条 + 合集筛选条 */
+  ok($('#albumBar').hidden === false, '有照片时出现视图工具条');
+  ok($$('#albumFilters button').map(b => b.textContent).join(',') === '全部,节日,生活',
+    '合集筛选条自动出现', $$('#albumFilters button').map(b => b.textContent).join(','));
+  ok($$('#albumGrid .album-item').length === 3, '拼图 3 张');
+  /* 时间线视图 */
+  $$('#albumTabs button')[1].click();
+  await sleep(30);
+  ok($('#albumTime').hidden === false && $('#albumGrid').hidden === true, '切到时间线视图');
+  ok($$('#albumTime li').length === 2, '按日期分 2 组', '实际 ' + $$('#albumTime li').length);
+  ok($$('#albumTime .album-item').length === 3, '时间线里 3 张照片');
+  ok($('#albumTime li').dataset.date === '2026-09-22', '最新日期在前');
+  ok($$('#albumTime li')[1].querySelector('time').textContent === '未标注日期', '无日期组排最后');
+  /* 合集筛选 */
+  $$('#albumFilters button')[1].click();   /* 节日 */
+  await sleep(30);
+  ok($$('#albumGrid .album-item').length === 2 && $('#albumTime').hidden === false,
+    '筛选「节日」后 2 张（视图保持时间线）');
+  $$('#albumFilters button')[0].click();   /* 全部 */
+  await sleep(30);
+  ok($$('#albumGrid .album-item').length === 3, '恢复全部 3 张');
+  /* 大图灯箱：点击 + 左右按钮 + 方向键 */
+  $$('#albumTabs button')[0].click();      /* 回拼图 */
+  await sleep(30);
+  $$('#albumGrid .album-item')[0].click();
+  await sleep(30);
+  ok($('#albumLight').hidden === false, '灯箱打开');
+  ok($('#lbCount').textContent === '1 / 3', '计数 1/3', $('#lbCount').textContent);
+  $('#albumLight .lb-next').click();
+  ok($('#lbCount').textContent === '2 / 3', '点「下一张」→ 2/3', $('#lbCount').textContent);
+  $('#albumLight .lb-prev').click();
+  ok($('#lbCount').textContent === '1 / 3', '点「上一张」→ 1/3');
+  d.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  ok($('#lbCount').textContent === '2 / 3', '方向键 → 2/3');
+  d.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+  ok($('#lbCount').textContent === '1 / 3', '方向键 ← 1/3');
+  d.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  await sleep(30);
+  ok($('#albumLight').hidden === true, 'Esc 关灯箱（站长弹窗仍开着）');
+  ok($('#adminMask').hidden === false, '关灯箱不误关站长弹窗');
+
   console.log('\n[10] 键盘 Esc 关闭弹窗');
   d.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   await sleep(30);
@@ -254,7 +336,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   console.log('\n[11] 刷新恢复（localStorage 数据回读）');
   const postsRaw = w.localStorage.getItem('pf-posts');
   const savedPosts = postsRaw ? JSON.parse(postsRaw) : null;
-  ok(savedPosts && savedPosts.length === 1 && savedPosts[0].slug === 'rainy-math', 'pf-posts 落盘 1 篇', String(postsRaw).slice(0, 80));
+  ok(savedPosts && savedPosts.length === 2 && !!savedPosts.find(p => p.slug === 'rainy-math') &&
+     !!savedPosts.find(p => p.slug === 'wind-200'), 'pf-posts 落盘 2 篇种子', String(postsRaw).slice(0, 80));
   ok(!!w.localStorage.getItem('pf-vid'), '访客 ID 已生成');
 
   console.log('\n[12] 运行期无 JS 报错');

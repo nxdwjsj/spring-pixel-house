@@ -76,8 +76,9 @@ function router(url, opts) {
   await sleep(300);
   const S = w.eval('Store');
   ok(S.cloud === true, '识别为云端模式');
-  ok(S.posts.length === 1 && S.posts[0].slug === 'cloud-post', '渲染云端文章（种子不覆盖已有数据）');
-  ok($$('#postGrid .card').length === 1 && $('#postGrid .card').dataset.animal === 'owl', '卡片动物 owl');
+  ok(S.posts.length === 3 && S.posts.some(p => p.slug === 'cloud-post'),
+    '云端文章保留，缺的新种子自动补入', '实际 ' + S.posts.length);
+  ok($$('#postGrid .card').length === 3 && $('#postGrid .card').dataset.animal === 'owl', '卡片 3 张，首卡动物 owl');
   ok($('#postGrid .card').classList.contains('t-sky'), '主题色 t-sky');
   ok($$('#loveLine li').length === 7 && $$('#loveLine li[data-date]').length === 7,
     '云端空爱档 → 自动补齐 7 条种子轨迹', '实际 ' + $$('#loveLine li').length);
@@ -122,10 +123,10 @@ function router(url, opts) {
   $('#edBody').dispatchEvent(new w.Event('input', { bubbles: true }));
   $('#edSave').click();
   await sleep(400);
-  ok(S.posts.length === 2 && cloud.posts.length === 2, '云端 PUT 落库', 'cloud=' + cloud.posts.length);
+  ok(S.posts.length === 4 && cloud.posts.length === 2, '云端 PUT 落库（本地 3+1，云端 1+1）', 'cloud=' + cloud.posts.length);
   ok(S.seeded === false, '种子不再标记待写入');
   ok(calls.some(c => c === 'PUT /api/admin/posts'), '发出过 PUT /api/admin/posts');
-  ok($$('#postGrid .card').length === 2, '列表 2 张卡');
+  ok($$('#postGrid .card').length === 4, '列表 4 张卡');
   const puts = calls.filter(c => c === 'PUT /api/admin/posts').length;
   ok(puts >= 1, 'PUT 次数 ≥1（seeded=false 时不重复写种子）', String(puts));
 
@@ -139,7 +140,7 @@ function router(url, opts) {
   $('#edSave').click();
   await sleep(400);
   ok(cloud.posts.some(p => p.slug === 'rainy-math'), '种子文章随首次保存写入云端');
-  ok(S.posts.length === 3, '本地列表 3 篇');
+  ok(S.posts.length === 5, '本地列表 5 篇');
   ok(S.seeded === false, 'seeded 已清');
   const rainy = cloud.posts.find(p => p.slug === 'rainy-math');
   ok(rainy && rainy.body.includes('火鸡面'), '种子 Markdown 正文完整');

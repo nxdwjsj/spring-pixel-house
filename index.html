@@ -407,8 +407,11 @@ body.night .friend{background:rgba(255,255,255,.06);color:var(--ink)}
   background:repeating-linear-gradient(90deg,var(--edge) 0 4px,transparent 4px 8px);
   opacity:.55;transition:background .8s}
 
-/* 5a 关于我 */
-#about{scroll-margin-top:80px}
+/* 5a 关于我 / 关于她 */
+#about,#about-her{scroll-margin-top:80px}
+.her-ava{width:64px;height:64px;flex:none;border:2px dashed var(--line);background:rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
+.her-ava img{width:100%;height:100%;object-fit:cover;display:block}
 .profile-top{display:flex;gap:14px;align-items:center}
 #avatar{cursor:pointer;position:relative;transition:transform .3s}
 #avatar:hover{transform:translateY(-4px) rotate(-4deg)}
@@ -768,12 +771,44 @@ body.night .anniv{background:rgba(255,255,255,.05);border-color:var(--edge-soft2
   padding:26px 14px;border:2px dashed var(--line);color:var(--mid);font-size:13px;
   line-height:1.8;text-align:center}
 .album-empty .spr{--s:.9;animation:beat 2s ease-in-out infinite}
+.album-bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;
+  margin:9px 0 12px}
+.album-tabs{display:flex;gap:6px}
+.album-tabs button{padding:5px 12px;border:2px solid var(--edge);background:rgba(255,255,255,.55);
+  font:inherit;font-size:12.5px;font-weight:700;color:var(--mid);cursor:pointer;
+  box-shadow:2px 2px 0 var(--edge-soft)}
+.album-tabs button.on{background:var(--pink);border-color:var(--edge2);color:#fff}
+body.night .album-tabs button{background:rgba(255,255,255,.08);color:#cfd8dc}
+body.night .album-tabs button.on{background:#c2185b;color:#fff}
+.album-filters{display:flex;gap:6px;flex-wrap:wrap}
+.album-filters button{padding:4px 10px;border:2px solid var(--line);background:transparent;
+  font:inherit;font-size:12px;color:var(--mid);cursor:pointer}
+.album-filters button.on{border-color:var(--mint);color:var(--mint);font-weight:700}
+body.night .album-filters button.on{border-color:var(--acc);color:var(--acc)}
+/* 相册时间线（与心动轨迹同款垂直时间轴） */
+.album-timeline{list-style:none;padding:2px 0 0 6px;margin:0}
+.album-timeline li{position:relative;padding:0 0 18px 26px;margin-left:7px;
+  border-left:2px dashed var(--line)}
+.album-timeline li:last-child{border-left-color:transparent;padding-bottom:0}
+.album-timeline .dot{position:absolute;left:-9px;top:1px;width:16px;height:16px;flex:none;
+  background:var(--card);border:2px solid var(--edge);box-shadow:2px 2px 0 var(--edge-soft)}
+.album-timeline time{display:block;font-size:12px;letter-spacing:2px;color:var(--mid);margin-bottom:9px}
+.tl-row{display:flex;flex-wrap:wrap;gap:10px}
+.tl-row .album-item{width:94px;margin:0}
 #albumLight{position:fixed;inset:0;z-index:130;background:rgba(20,26,50,.85);
   display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:26px}
 #albumLight[hidden]{display:none}
 #albumLight img{max-width:min(88vw,760px);max-height:72vh;border:3px solid #fff;
   box-shadow:8px 8px 0 rgba(0,0,0,.4);background:#fff}
 #albumLight .lb-cap{color:#fff;font-size:14px;letter-spacing:1.5px;text-align:center}
+#albumLight .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:64px;
+  background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.55);color:#fff;
+  font-size:28px;line-height:1;cursor:pointer;transition:background .2s}
+#albumLight .lb-nav:hover{background:rgba(255,255,255,.32)}
+#albumLight .lb-prev{left:4vw}
+#albumLight .lb-next{right:4vw}
+#albumLight .lb-count{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  color:#fff;font-size:13px;letter-spacing:3px;opacity:.85}
 #albumLight .lb-close{position:absolute;top:18px;right:22px;padding:8px 14px;background:var(--card);
   border:2px solid var(--edge);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;
   box-shadow:4px 4px 0 rgba(0,0,0,.35)}
@@ -918,6 +953,28 @@ body.night .mrow select{background:rgba(255,255,255,.09);color:var(--ink)}
   background:#fff;color:#c62828;font-size:12px;font-weight:800;line-height:1;cursor:pointer;
   box-shadow:2px 2px 0 rgba(0,0,0,.2)}
 .ph-thumb.new{border-color:var(--pink)}
+.ph-thumb .alb-tag{position:absolute;left:3px;top:3px;max-width:calc(100% - 6px);
+  background:var(--mint);color:#fff;font-size:10px;padding:1px 5px;letter-spacing:.5px;
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ph-thumb.picking{cursor:pointer}
+.ph-thumb.picking .rm{display:none}
+.ph-thumb.sel{border-color:var(--pink);box-shadow:0 0 0 3px rgba(224,105,154,.35),3px 3px 0 var(--edge-soft)}
+.ph-thumb.sel::after{content:'✓';position:absolute;right:3px;top:3px;width:20px;height:20px;
+  background:var(--pink);color:#fff;font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center}
+.alb-new{display:flex;gap:8px;margin:10px 0 8px}
+.alb-new input{flex:1;min-width:0;padding:7px 9px;border:2px solid var(--edge);
+  background:rgba(255,255,255,.85);font:inherit;font-size:13px;color:var(--ink);outline:none}
+body.night .alb-new input{background:rgba(255,255,255,.09)}
+.album-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px}
+.alb-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:2px solid var(--mint);
+  background:rgba(63,160,114,.1);font:inherit;font-size:12.5px;font-weight:700;color:var(--mint);cursor:pointer}
+body.night .alb-chip{color:var(--acc);border-color:var(--acc);background:rgba(92,141,224,.14)}
+.alb-chip i{font-style:normal;opacity:.75;font-size:11px}
+.alb-chip .rm{color:#c62828;font-size:11px;padding:0 2px}
+.alb-pick{border:2px dashed var(--mint);padding:10px 12px;margin-bottom:10px;
+  background:rgba(63,160,114,.06)}
+.alb-pick .hint{margin:0 0 8px}
 .ph-thumb input{position:absolute;left:3px;right:3px;bottom:3px;font-size:10px;padding:2px 3px;
   border:1px solid var(--line);background:rgba(255,255,255,.92);color:#546e7a;outline:none;
   text-overflow:ellipsis}
@@ -1185,12 +1242,20 @@ body.night .mrow select{background:rgba(255,255,255,.09);color:var(--ink)}
 
       <div class="love-panel">
         <span class="tag">回忆相册</span>
+        <div class="album-bar" id="albumBar" hidden>
+          <div class="album-tabs" id="albumTabs">
+            <button type="button" data-view="grid" class="on">拼图</button>
+            <button type="button" data-view="time">时间线</button>
+          </div>
+          <div class="album-filters" id="albumFilters"></div>
+        </div>
         <div class="album" id="albumGrid">
           <div class="album-empty">
             <span class="spr"><i class="s-heart"></i></span>
             相册还空着……<br>进入站长模式，把照片贴进来
           </div>
         </div>
+        <ol class="album-timeline" id="albumTime" hidden></ol>
       </div>
 
     </div>
@@ -1200,8 +1265,11 @@ body.night .mrow select{background:rgba(255,255,255,.09);color:var(--ink)}
 <!-- 相册大图 -->
 <div id="albumLight" hidden>
   <button class="lb-close" type="button">关闭</button>
+  <button class="lb-nav lb-prev" type="button" aria-label="上一张">‹</button>
   <img id="lbImg" alt="回忆照片">
+  <button class="lb-nav lb-next" type="button" aria-label="下一张">›</button>
   <div class="lb-cap" id="lbCap"></div>
+  <div class="lb-count" id="lbCount"></div>
 </div>
 
 <!-- 主体 -->
@@ -1248,6 +1316,22 @@ x = 火鸡面 + 肉夹馍
             <p>第一口面下去，辣意顺着舌尖一路烧到天灵盖，我嘶哈着吸气，眼泪和悔恨一起涌上来：这道题白天我要是有这么上头，早做完了。第二口肉夹馍，肥瘦相间的肉混着青椒，把辣意稳稳按了下去——一燥一稳，像极了考卷上偶尔出现的那道送分题。</p>
             <blockquote>人间不值得，但火鸡面和肉夹馍值得。数学，明天再收拾它。</blockquote>
             <p>洗完碗，雨又开始下了。我坐回书桌前，把今天的错题标了红，然后心平气和地写下明日计划：第一，搞懂极限；第二，如果搞不懂，就再去买一个肉夹馍。</p>
+          </div>
+        </article>
+
+        <article class="card" data-animal="bear" data-slug="wind-200" data-key="今天风很大 200天 纪念日 小熊 日常">
+          <span class="deco spr d-topright" data-spr="bear" data-day="bear-idle" data-react="bear-happy" data-blush="bear-blush"><i class="s-bear-idle"></i></span>
+          <button class="heart" aria-label="点赞">♥</button>
+          <div class="body">
+            <h3>今天风很大，是 200 天的纪念日</h3>
+            <div class="meta"><span>2026-09-30</span><span class="tag">纪念日</span><span class="tag">日常</span></div>
+            <p class="summary">昨天还有一点小不愉快，但以后我会好好爱她。希望可以有很多个 200 天。</p>
+            <a class="readmore" href="#/post/wind-200" data-slug="wind-200">阅读全文<i class="arrow"></i></a>
+          </div>
+          <div class="post-full" hidden>
+            <p>今天风很大，是 200 天的纪念日。</p>
+            <p>昨天还跟对象有一点小不愉快，但是以后我会好好爱她的。她今天嘴里的上膛长了个小泡，我很关心她。</p>
+            <p>以后我也会好好对她，希望可以有很多个 200 天。</p>
           </div>
         </article>
 
@@ -1308,6 +1392,22 @@ x = 火鸡面 + 肉夹馍
       </div>
       <p class="profile-txt">白天写代码，晚上画像素。相信每只小动物都有自己的小心事，也相信温柔的东西会慢慢长大。</p>
       <div class="profile-tags"><span>撸猫</span><span>像素画</span><span>烘焙</span><span>发呆</span></div>
+    </div>
+
+    <!-- 关于她 -->
+    <div class="widget" id="about-her">
+      <h4><span class="spr wi"><i class="s-heart"></i></span>关于她</h4>
+      <div class="profile-top">
+        <div id="herAvatar" class="her-ava" title="她" hidden>
+          <img id="herAvatarImg" alt="她的形象">
+        </div>
+        <div>
+          <div class="profile-name">宝宝</div>
+          <div class="profile-role">我的女孩 / 努力的小太阳</div>
+        </div>
+      </div>
+      <p class="profile-txt">她是一个很努力、很可爱、很脆弱又很坚强的小女孩。想把所有的温柔都给她，陪她有很多个 200 天。</p>
+      <div class="profile-tags"><span>努力</span><span>可爱</span><span>脆弱</span><span>坚强</span></div>
     </div>
 
     <!-- 今日天气 -->
@@ -1517,6 +1617,18 @@ x = 火鸡面 + 肉夹馍
       <div class="tab-page" id="pg-photo" hidden>
         <label class="file-label">＋ 选择照片<input type="file" id="phFile" accept="image/*" multiple></label>
         <div class="hint" style="margin-top:7px">会自动压缩到最长边 1000px；单张约 1.5MB 上限，最多 60 张</div>
+        <div class="alb-new">
+          <input id="albName" placeholder="合集名，如：生活、节日">
+          <button class="btn ghost" type="button" id="albAdd">新建合集并选照片</button>
+        </div>
+        <div class="album-chips" id="albChips"></div>
+        <div class="alb-pick" id="albPick" hidden>
+          <p class="hint" id="albPickTip"></p>
+          <div class="btn-row">
+            <button class="btn primary" type="button" id="albPickOk">把选中的照片加入合集</button>
+            <button class="btn ghost" type="button" id="albPickCancel">取消</button>
+          </div>
+        </div>
         <div class="ph-thumbs" id="phThumbs"></div>
         <div class="btn-row"><button class="btn primary" type="button" id="phSave">保存相册</button></div>
         <p class="msg" id="phMsg" hidden></p>
@@ -2598,21 +2710,55 @@ const RAINY_MD = [
   '洗完碗，雨又开始下了。我坐回书桌前，把今天的错题标了红，然后心平气和地写下明日计划：第一，搞懂极限；第二，如果搞不懂，就再去买一个肉夹馍。'
 ].join('\n');
 
+/* 第 200 天纪念文章（与静态卡片 .post-full 同文） */
+const WIND_200_MD = [
+  '今天风很大，是 200 天的纪念日。',
+  '',
+  '昨天还跟对象有一点小不愉快，但是以后我会好好爱她的。她今天嘴里的上膛长了个小泡，我很关心她。',
+  '',
+  '以后我也会好好对她，希望可以有很多个 200 天。'
+].join('\n');
+
 function seedPosts() {
-  const card = $('#postGrid .card[data-slug]');
-  if (!card) return [];
-  const meta = card.querySelector('.meta');
-  return [{
-    slug: card.dataset.slug,
-    title: card.querySelector('h3').textContent.trim(),
-    date: (meta.querySelector('span') || {}).textContent.trim(),
-    tags: $$('.tag', meta).map(t => t.textContent.trim()),
-    summary: (card.querySelector('.summary') || {}).textContent.trim(),
-    animal: card.dataset.animal || 'rabbit',
-    theme: 'pink',
-    deco: 'd-topright',
-    body: RAINY_MD
-  }];
+  const cards = $$('#postGrid .card[data-slug]');
+  const bodyMD = { 'rainy-math': RAINY_MD, 'wind-200': WIND_200_MD };
+  const themeMap = { 'rainy-math': 'pink', 'wind-200': 'sky' };
+  return cards.map(card => {
+    const meta = card.querySelector('.meta');
+    const slug = card.dataset.slug;
+    const o = {
+      slug: slug,
+      title: card.querySelector('h3').textContent.trim(),
+      date: (meta.querySelector('span') || {}).textContent.trim(),
+      tags: $$('.tag', meta).map(t => t.textContent.trim()),
+      summary: (card.querySelector('.summary') || {}).textContent.trim(),
+      animal: card.dataset.animal || 'rabbit',
+      theme: themeMap[slug] || 'pink',
+      deco: 'd-topright'
+    };
+    if (bodyMD[slug]) o.body = bodyMD[slug];
+    else {
+      const html = (card.querySelector('.post-full') || {}).innerHTML || '';
+      if (html) o.bodyHtml = html;
+    }
+    return o;
+  });
+}
+/* 种子文章补缺：老存档缺的新种子文章自动补上；打过 pf-seedv 标记后不再补，
+   避免手删的种子文章被复活（换设备/清缓存可能补回一次，属可接受代价） */
+const POSTS_SEED_V = 2;   /* v2 = 新增 wind-200 */
+function mergeSeedPosts(list, seed) {
+  if (!Array.isArray(list)) return seed.slice();
+  try {
+    if (LS.get('pf-seedv', 0) !== POSTS_SEED_V) {
+      const next = list.slice();
+      const have = new Set(next.map(p => p.slug));
+      seed.forEach(s => { if (!have.has(s.slug)) next.push(s); });
+      LS.set('pf-seedv', POSTS_SEED_V);
+      return next;
+    }
+  } catch (e) {}
+  return list;
 }
 /* 恋爱存档的默认内容：从静态 HTML 里读出来（站长改过则以存档为准） */
 const LOVE_SEED_V = 2;   /* 种子版本：v2 新增 520/二周年/1314/中秋 等条目 */
@@ -2676,7 +2822,7 @@ const Store = {
     if (this.cloud) {
       try {
         const d = await apiJSON('/api/posts');
-        if (Array.isArray(d.posts) && d.posts.length) this.posts = d.posts;
+        if (Array.isArray(d.posts) && d.posts.length) this.posts = mergeSeedPosts(d.posts, this.seed);
         else { this.posts = this.seed.slice(); this.seeded = true; }   /* 云端为空 → 展示种子，待首次保存时写入 */
       } catch (e) { this.posts = this.seed.slice(); }
       try {
@@ -2685,7 +2831,7 @@ const Store = {
           memories: l.memories || [], photos: l.photos || [] };
       } catch (e) { this.love = seedLove(); }
     } else {
-      this.posts = LS.get('pf-posts', null) || this.seed.slice();
+      this.posts = mergeSeedPosts(LS.get('pf-posts', null) || this.seed.slice(), this.seed);
       this.love = LS.get('pf-love', null) || seedLove();
     }
     if (!this.love || typeof this.love !== 'object') this.love = seedLove();
@@ -2800,18 +2946,48 @@ function renderLove() {
   renderPhotos(L.photos || []);
   tickAnniv();
 }
+/* 相册视图：拼图 / 时间线 + 合集筛选（albumFilter 为合集名，'' = 全部） */
+let albumView = 'grid', albumFilter = '', albumShown = [];
+function albumFigHTML(p, i) {
+  return '<figure class="album-item" data-i="' + i + '">' +
+    '<img src="' + escHtml(p.data) + '" alt="' + escHtml(p.caption || '回忆照片') + '" loading="lazy">' +
+    '<figcaption class="a-cap">' + escHtml(p.caption || p.date || '回忆') + '</figcaption></figure>';
+}
 function renderPhotos(photos) {
-  const g = $('#albumGrid');
+  const g = $('#albumGrid'), tl = $('#albumTime'), bar = $('#albumBar'), flt = $('#albumFilters');
+  photos = Array.isArray(photos) ? photos : [];
+  albumShown = photos;
   if (!photos.length) {
     g.innerHTML = '<div class="album-empty"><span class="spr"><i class="s-heart"></i></span>' +
       '相册还空着……<br>进入站长模式，把照片贴进来</div>';
+    bar.hidden = true; flt.innerHTML = '';
+    g.hidden = false; tl.hidden = true; tl.innerHTML = '';
     return;
   }
-  g.innerHTML = photos.map(p =>
-    '<figure class="album-item" data-src="' + escHtml(p.data) + '" data-cap="' +
-    escHtml((p.caption || '') + (p.date ? ' · ' + p.date : '')) + '">' +
-    '<img src="' + escHtml(p.data) + '" alt="' + escHtml(p.caption || '回忆照片') + '" loading="lazy">' +
-    '<figcaption class="a-cap">' + escHtml(p.caption || p.date || '回忆') + '</figcaption></figure>').join('');
+  bar.hidden = false;
+  /* 合集筛选条：有归了合集的照片才出现 */
+  const albums = Array.from(new Set(photos.map(p => p.album).filter(Boolean)));
+  if (albumFilter && albums.indexOf(albumFilter) < 0) albumFilter = '';
+  flt.innerHTML = ['<button type="button" data-alb=""' + (albumFilter ? '' : ' class="on"') + '>全部</button>']
+    .concat(albums.map(a => '<button type="button" data-alb="' + escHtml(a) + '"' +
+      (albumFilter === a ? ' class="on"' : '') + '>' + escHtml(a) + '</button>')).join('');
+  const shown = albumFilter ? photos.filter(p => p.album === albumFilter) : photos;
+  albumShown = shown;
+  g.innerHTML = shown.map(albumFigHTML).join('');
+  /* 时间线：按日期分组倒序，无日期的组排最后（同心动轨迹的竖轴样式） */
+  const groups = new Map();
+  shown.forEach((p, i) => {
+    const key = /^\d{4}-\d{2}-\d{2}$/.test(p.date || '') ? p.date : '';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(i);
+  });
+  const keys = Array.from(groups.keys()).sort((a, b) => (b || '0').localeCompare(a || '0'));
+  tl.innerHTML = keys.map(k =>
+    '<li' + (k ? ' data-date="' + k + '"' : '') + '><span class="dot"></span><time>' +
+    (k ? k.replace(/-/g, '.') : '未标注日期') + '</time><div class="tl-row">' +
+    groups.get(k).map(i => albumFigHTML(shown[i], i)).join('') + '</div></li>').join('');
+  g.hidden = albumView !== 'grid';
+  tl.hidden = albumView !== 'time';
 }
 /* 纪念日倒计时：
    - 每年 + 农历（生日/中秋这类按农历过的）→ 每次重新换算成下一个目标日，
@@ -2857,17 +3033,41 @@ function tickAnniv() {
 }
 setInterval(tickAnniv, 60000);
 
-/* 相册大图 */
+/* 相册大图：左右切换（按钮 + 方向键），列表跟随当前筛选后的照片 */
 const albumLight = $('#albumLight');
-$('#albumGrid').addEventListener('click', e => {
+let lbIdx = 0;
+function lbShow(i) {
+  if (!albumShown.length) return;
+  lbIdx = (i + albumShown.length) % albumShown.length;
+  const p = albumShown[lbIdx];
+  $('#lbImg').src = p.data;
+  $('#lbCap').textContent = (p.caption || '') + (p.date ? ' · ' + p.date : '');
+  $('#lbCount').textContent = (lbIdx + 1) + ' / ' + albumShown.length;
+}
+function lbOpen(i) { lbShow(i); albumLight.hidden = false; }
+function lbClose() { albumLight.hidden = true; }
+['#albumGrid', '#albumTime'].forEach(sel => $(sel).addEventListener('click', e => {
   const item = e.target.closest('.album-item');
-  if (!item) return;
-  $('#lbImg').src = item.dataset.src;
-  $('#lbCap').textContent = item.dataset.cap || '';
-  albumLight.hidden = false;
-});
+  if (item) lbOpen(+item.dataset.i);
+}));
 albumLight.addEventListener('click', e => {
-  if (e.target.closest('.lb-close') || e.target === albumLight) albumLight.hidden = true;
+  if (e.target.closest('.lb-close') || e.target === albumLight) lbClose();
+  else if (e.target.closest('.lb-prev')) lbShow(lbIdx - 1);
+  else if (e.target.closest('.lb-next')) lbShow(lbIdx + 1);
+});
+/* 视图切换与合集筛选 */
+$('#albumTabs').addEventListener('click', e => {
+  const b = e.target.closest('button[data-view]');
+  if (!b) return;
+  albumView = b.dataset.view;
+  $$('#albumTabs button').forEach(x => x.classList.toggle('on', x === b));
+  renderPhotos(Store.love.photos || []);
+});
+$('#albumFilters').addEventListener('click', e => {
+  const b = e.target.closest('button[data-alb]');
+  if (!b) return;
+  albumFilter = b.dataset.alb;
+  renderPhotos(Store.love.photos || []);
 });
 
 /* ============================================================
@@ -2875,6 +3075,8 @@ albumLight.addEventListener('click', e => {
    ============================================================ */
 const adminMask = $('#adminMask'), loginPane = $('#loginPane'), adminPanes = $('#adminPanes');
 let panesBuilt = false, editingSlug = null, photoDraft = [];
+let pickAlbum = '';                 /* 正在圈选照片的合集名（'' = 未在选照片模式） */
+let pickSet = new Set();            /* 选照片模式下勾中的 photoDraft 下标 */
 
 function adminShowMsg(el, text, ok) {
   el.hidden = !text;
@@ -2900,7 +3102,13 @@ $('#adminBtn').addEventListener('click', openAdmin);
 $('#adminClose').addEventListener('click', () => { adminMask.hidden = true; });
 adminMask.addEventListener('click', e => { if (e.target === adminMask) adminMask.hidden = true; });
 addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !adminMask.hidden) albumLight.hidden = true, adminMask.hidden = true;
+  if (!albumLight.hidden) {                       /* 灯箱打开：←/→ 切换，Esc 关闭 */
+    if (e.key === 'Escape') lbClose();
+    else if (e.key === 'ArrowLeft') lbShow(lbIdx - 1);
+    else if (e.key === 'ArrowRight') lbShow(lbIdx + 1);
+    return;
+  }
+  if (e.key === 'Escape' && !adminMask.hidden) adminMask.hidden = true;
 });
 
 $('#loginBtn').addEventListener('click', async () => {
@@ -2929,7 +3137,9 @@ function buildPanes() {
   renderPostAdminList();
   fillLoveEditors();
   photoDraft = (Store.love.photos || []).map(p => Object.assign({}, p));
+  exitPick();
   renderPhotoThumbs();
+  renderAlbChips();
   switchTab('post');
 }
 function switchTab(page) {
@@ -3122,12 +3332,42 @@ function compressImg(file, maxSide, quality) {
   });
 }
 function renderPhotoThumbs() {
+  const picking = !!pickAlbum;
   $('#phThumbs').innerHTML = photoDraft.length ? photoDraft.map((p, i) =>
-    '<div class="ph-thumb' + (p._new ? ' new' : '') + '" data-i="' + i + '">' +
+    '<div class="ph-thumb' + (p._new ? ' new' : '') + (picking ? ' picking' : '') +
+    (pickSet.has(i) ? ' sel' : '') + '" data-i="' + i + '">' +
     '<img src="' + escHtml(p.data) + '" alt="">' +
+    (p.album ? '<span class="alb-tag">' + escHtml(p.album) + '</span>' : '') +
     '<input value="' + escHtml(p.caption || '') + '" placeholder="说明" data-f="cap">' +
     '<button class="rm" type="button" title="删除">✕</button></div>').join('')
     : '<p class="hint">还没有照片</p>';
+}
+/* 合集：名字只从照片的 album 字段反推（没有独立的空合集） */
+function renderAlbChips() {
+  const counts = {};
+  photoDraft.forEach(p => { if (p.album) counts[p.album] = (counts[p.album] || 0) + 1; });
+  $('#albChips').innerHTML = Object.keys(counts).map(n =>
+    '<button class="alb-chip" type="button" data-alb="' + escHtml(n) + '">' + escHtml(n) +
+    ' <i>' + counts[n] + '</i><span class="rm" data-rm="' + escHtml(n) + '" title="解散合集">✕</span></button>').join('');
+}
+function enterPick(name) {
+  pickAlbum = name;
+  pickSet = new Set();
+  $('#albPick').hidden = false;
+  $('#albPickTip').textContent = '点选要放进「' + name + '」的照片，然后点下面的按钮';
+  updatePickBtn();
+  renderPhotoThumbs();
+}
+function exitPick() {
+  pickAlbum = '';
+  pickSet = new Set();
+  $('#albPick').hidden = true;
+  renderPhotoThumbs();
+}
+function updatePickBtn() {
+  $('#albPickOk').textContent = pickSet.size
+    ? '把选中的 ' + pickSet.size + ' 张加入「' + pickAlbum + '」'
+    : '先点选照片';
 }
 
 function bindAdminEvents() {
@@ -3314,7 +3554,7 @@ function bindAdminEvents() {
         photoDraft.push({ id: 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
           date: new Date().toISOString().slice(0, 10),
           caption: f.name.replace(/\.[^.]+$/, '').slice(0, 40),
-          data: data, _new: true });
+          album: '', data: data, _new: true });
         ok++;
       } catch (err) { big++; }
     }
@@ -3328,23 +3568,62 @@ function bindAdminEvents() {
     if (inp) photoDraft[+inp.closest('.ph-thumb').dataset.i].caption = inp.value;
   });
   $('#phThumbs').addEventListener('click', e => {
-    const rm = e.target.closest('.rm');
-    if (!rm) return;
-    photoDraft.splice(+rm.closest('.ph-thumb').dataset.i, 1);
-    renderPhotoThumbs();
+    const box = e.target.closest('.ph-thumb');
+    if (!box) return;
+    const i = +box.dataset.i;
+    if (e.target.closest('.rm')) {                /* 选照片模式下先不给删，避免误点 */
+      if (pickAlbum) return;
+      photoDraft.splice(i, 1);
+      renderPhotoThumbs(); renderAlbChips();
+      return;
+    }
+    if (e.target.matches('input')) return;
+    if (pickAlbum) {                              /* 圈选/取消圈选 */
+      pickSet.has(i) ? pickSet.delete(i) : pickSet.add(i);
+      renderPhotoThumbs(); updatePickBtn();
+    }
   });
+  /* 合集：起名 → 圈照片 → 归入（存在相册的 album 字段里，保存相册时生效） */
+  $('#albAdd').addEventListener('click', () => {
+    const name = $('#albName').value.trim();
+    if (!name) return adminShowMsg($('#phMsg'), '先给合集起个名字');
+    $('#albName').value = '';
+    enterPick(name);
+  });
+  $('#albChips').addEventListener('click', e => {
+    const rm = e.target.closest('[data-rm]');
+    if (rm) {
+      const n = rm.dataset.rm;
+      if (!confirm('解散「' + n + '」合集？只是取消分组，照片不会被删除')) return;
+      photoDraft.forEach(p => { if (p.album === n) p.album = ''; });
+      if (pickAlbum === n) exitPick(); else renderPhotoThumbs();
+      renderAlbChips();
+      return;
+    }
+    const chip = e.target.closest('[data-alb]');
+    if (chip) enterPick(chip.dataset.alb);
+  });
+  $('#albPickOk').addEventListener('click', () => {
+    const msgEl = $('#phMsg');
+    if (!pickSet.size) return adminShowMsg(msgEl, '还没选照片');
+    const n = pickSet.size, name = pickAlbum;
+    pickSet.forEach(i => { photoDraft[i].album = name; });
+    exitPick(); renderAlbChips();
+    adminShowMsg(msgEl, n + ' 张照片已归入「' + name + '」，点「保存相册」生效', true);
+  });
+  $('#albPickCancel').addEventListener('click', exitPick);
   $('#phSave').addEventListener('click', async () => {
     const msgEl = $('#phMsg'), btn = $('#phSave');
     btn.disabled = true;
     try {
       const clean = photoDraft.map(p => ({ id: p.id, date: p.date || '',
-        caption: p.caption || '', data: p.data }));
+        caption: p.caption || '', album: p.album || '', data: p.data }));
       Store.love.photos = clean;
       await Store.savePhotos();
       photoDraft = clean.map(p => Object.assign({}, p));
       renderPhotos(clean);
       refreshAllAnimals();
-      renderPhotoThumbs();
+      renderPhotoThumbs(); renderAlbChips();
       adminShowMsg(msgEl, '相册已保存（' + clean.length + ' 张）', true);
     } catch (e) { adminShowMsg(msgEl, '保存失败：' + e.message); }
     finally { btn.disabled = false; }

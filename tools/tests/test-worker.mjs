@@ -132,7 +132,7 @@ ok(r.status === 400, '空体拒绝');
 console.log('\n[6] 管理相册');
 const tiny = 'data:image/jpeg;base64,/9j/4AAQSkZJRg';
 r = await call('/api/admin/photos', { method: 'PUT', body: { photos: [
-  { id: 'p1', date: '2026-09-30', caption: '合影', data: tiny }] } });
+  { id: 'p1', date: '2026-09-30', caption: '合影', album: '生活', data: tiny }] } });
 ok(r.status === 200, 'PUT 合法照片');
 r = await call('/api/admin/photos', { method: 'PUT', body: { photos: [{ id: 'p2', data: 'not-image' }] } });
 ok(r.status === 400, '非 dataURL 拒绝');
@@ -142,7 +142,8 @@ r = await call('/api/admin/photos', { method: 'PUT', body: { photos: Array.from(
 ok(r.status === 400, '超过 60 张拒绝');
 r = await call('/api/love');
 d = await json(r);
-ok(d.photos.length === 1 && d.photos[0].caption === '合影', 'GET /api/love 带出照片');
+ok(d.photos.length === 1 && d.photos[0].caption === '合影' && d.photos[0].album === '生活',
+  'GET /api/love 带出照片与合集');
 
 console.log('\n[7] 未设 ADMIN_KEY 时关闭后台');
 const env2 = { DATA: makeKV(), ASSETS: { fetch: () => new Response('s') } };

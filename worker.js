@@ -219,6 +219,7 @@ async function adminPhotos(request, env) {
     id: str(p.id, 40) || 'p' + Math.random().toString(36).slice(2, 10),
     date: dateOk(p.date) ? p.date : '',
     caption: str(p.caption, 120),
+    album: str(p.album, 40),
     data: p.data
   }));
   await setJSON(env, 'photos', photos);
