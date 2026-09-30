@@ -382,19 +382,18 @@ body.night .readmore{color:var(--acc)}
 .card.hide{display:none}
 #noResult{display:none;padding:30px;text-align:center;color:var(--mid);grid-column:1/-1}
 
-/* ---------- 友情链接 ---------- */
-#friends{margin-top:34px;background:var(--card);border:2px solid var(--edge);border-radius:2px;
-  padding:20px;box-shadow:4px 4px 0 var(--edge-soft);transition:background .8s}
-.friend-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
-.friend{display:flex;align-items:center;gap:9px;padding:9px 15px;border-radius:2px;
-  border:2px solid var(--edge);background:rgba(255,255,255,.5);color:var(--ink);font-size:14px;
-  font-weight:600;letter-spacing:1px;transition:.2s;
-  box-shadow:3px 3px 0 var(--edge-soft)}
+/* ---------- 友情链接（页脚一行小块） ---------- */
+#friends{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  max-width:680px;margin:0 auto 15px}
+.friend{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:2px;
+  border:2px solid var(--edge);background:rgba(255,255,255,.5);color:var(--ink);font-size:13px;
+  font-weight:600;letter-spacing:.5px;transition:.2s;
+  box-shadow:2px 2px 0 var(--edge-soft)}
 body.night .friend{background:rgba(255,255,255,.06);color:var(--ink)}
 .friend:hover{transform:translate(-2px,-2px);border-color:var(--edge2);
-  box-shadow:5px 5px 0 var(--edge-soft2)}
+  box-shadow:4px 4px 0 var(--edge-soft2)}
 .friend:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--edge-soft2)}
-.friend .spr{--s:.5}
+.friend .spr{--s:.4}
 
 /* ---------- 侧边栏 ---------- */
 #sidebar{display:flex;flex-direction:column;gap:20px;position:sticky;top:76px}
@@ -536,7 +535,6 @@ body.night #postGrid .card:nth-child(even){border-color:#9575cd;box-shadow:4px 4
 body.night .heart{background:rgba(20,28,96,.85);color:#5c6bc0}
 body.night .heart.liked{background:#3f2a5d;color:#ff8fab}
 body.night .widget{box-shadow:4px 4px 0 rgba(0,0,0,.45);border-color:#5c6bc0}
-body.night #friends{box-shadow:4px 4px 0 rgba(0,0,0,.45);border-color:#5c6bc0}
 body.night #spring{filter:brightness(.42) saturate(.6)}   /* 春景整体压暗 */
 body.night .sun-glow,body.night .bug{opacity:0}
 body.night .cloud{opacity:.16}
@@ -1282,20 +1280,6 @@ x = 火鸡面 + 肉夹馍
       </article>
     </section>
 
-    <!-- 友情链接 -->
-    <section id="friends">
-      <div class="section-title">
-        <span class="spr" data-spr="fox" data-day="fox-idle" data-alts="fox-wag"><i class="s-fox-idle"></i></span>
-        友情链接
-      </div>
-      <div class="section-sub">去邻居家的草地上串个门</div>
-      <div class="friend-row">
-        <a class="friend" href="#friends"><span class="spr" data-spr="frog" data-day="frog-idle"><i class="s-frog-idle"></i></span>薄荷工坊</a>
-        <a class="friend" href="#friends"><span class="spr" data-spr="rabbit" data-day="rabbit-idle"><i class="s-rabbit-idle"></i></span>樱花小站</a>
-        <a class="friend" href="#friends"><span class="spr" data-spr="bear" data-day="bear-idle"><i class="s-bear-idle"></i></span>像素农场</a>
-        <a class="friend" href="#friends"><span class="spr" data-spr="owl" data-day="owl-idle"><i class="s-owl-idle"></i></span>晚风日记</a>
-      </div>
-    </section>
   </div>
 
   <!-- 侧边栏 -->
@@ -1397,6 +1381,12 @@ x = 火鸡面 + 肉夹馍
     <div class="foot-item" data-kind="rabbit"><span class="spr" data-spr="rabbit" data-day="rabbit-idle" data-alts="rabbit-hop,rabbit-ear"><i class="s-rabbit-idle"></i></span><b>团子</b></div>
     <div class="foot-item" data-kind="bear"><span class="spr" data-spr="bear" data-day="bear-idle" data-alts="bear-yawn,bear-chef"><i class="s-bear-idle"></i></span><b>麻薯</b></div>
   </div>
+  <nav id="friends" aria-label="友情链接">
+    <a class="friend" href="#friends"><span class="spr" data-spr="frog" data-day="frog-idle"><i class="s-frog-idle"></i></span>薄荷工坊</a>
+    <a class="friend" href="#friends"><span class="spr" data-spr="rabbit" data-day="rabbit-idle"><i class="s-rabbit-idle"></i></span>樱花小站</a>
+    <a class="friend" href="#friends"><span class="spr" data-spr="bear" data-day="bear-idle"><i class="s-bear-idle"></i></span>像素农场</a>
+    <a class="friend" href="#friends"><span class="spr" data-spr="owl" data-day="owl-idle"><i class="s-owl-idle"></i></span>晚风日记</a>
+  </nav>
   <p class="foot-text">© 2026 <b>春风像素屋</b> · 用爱和像素搭建</p>
 </footer>
 

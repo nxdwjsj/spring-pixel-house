@@ -55,6 +55,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok(cards[0] && cards[0].dataset.slug === 'rainy-math', 'slug 为 rainy-math');
   ok(cards[0] && cards[0].querySelector('.post-full').innerHTML.includes('火鸡面'), '正文含种子文章内容');
   ok(S.posts.length === 1 && S.posts[0].body.includes('## 上午'), 'Store 种子为 Markdown 源文');
+  ok(!!d.querySelector('#footer #friends .friend'), '友情链接挪进页脚');
+  ok(!$('#posts #friends') && d.querySelectorAll('#footer .friend').length === 4,
+    '主内容区无大友链板块，页脚 4 个小链接');
 
   console.log('\n[2] 阅读页路由（回归：不再跳到恋爱存档点）');
   w.location.hash = '#/post/rainy-math';
