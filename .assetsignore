@@ -1,0 +1,15 @@
+# 排除非网站资源，避免打包到 Workers Assets 超过 25MB 上限
+node_modules/
+.git/
+.wrangler/
+tools/
+dist/
+*.log
+package.json
+package-lock.json
+wrangler.toml
+README.md
+.gitignore
+.assetsignore
+# worker.js 是 main 入口，不应作为 asset
+worker.js

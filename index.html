@@ -616,6 +616,7 @@ body.night #grid{opacity:.03}
 #postDetail[hidden]{display:none}
 #posts[hidden],#friends[hidden]{display:none}
 #hero[hidden]{display:none}          /* #hero 为 display:flex，须显式覆盖 hidden */
+#love[hidden]{display:none}          /* #love 同为 display:flex，打开阅读页时一并隐藏 */
 #backBtn{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;
   padding:10px 16px;background:var(--btnBg);border:2px solid var(--edge);border-radius:2px;
   color:var(--ink);font:inherit;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;
@@ -716,6 +717,229 @@ body.night .detail-nav a{color:var(--acc)}
   .l-now b{font-size:38px}
   .couple .spr{--s:.7}
   .scroll-cue{font-size:12px;letter-spacing:1px}
+}
+
+/* ============================================================
+   主题色卡片（站长发布文章时选择的颜色）+ 阅读页跟随同色
+   ============================================================ */
+.card.t-pink,#postDetail.t-pink{--mint:#e0699a;--edge:#c26a8f;--edge2:#c26a8f;--edge-soft:rgba(194,106,143,.32);--edge-soft2:rgba(194,106,143,.32);--btnBg:rgba(244,143,177,.2)}
+.card.t-mint,#postDetail.t-mint{--mint:#3fa072;--edge:#4e9b7a;--edge2:#4e9b7a;--edge-soft:rgba(78,155,122,.32);--edge-soft2:rgba(78,155,122,.32);--btnBg:rgba(129,199,132,.22)}
+.card.t-sky,#postDetail.t-sky{--mint:#3d92d6;--edge:#4a8fc9;--edge2:#4a8fc9;--edge-soft:rgba(74,143,201,.32);--edge-soft2:rgba(74,143,201,.32);--btnBg:rgba(144,202,249,.22)}
+.card.t-honey,#postDetail.t-honey{--mint:#cd922a;--edge:#cf9a3c;--edge2:#cf9a3c;--edge-soft:rgba(207,154,60,.34);--edge-soft2:rgba(207,154,60,.34);--btnBg:rgba(255,213,128,.3)}
+.card.t-purple,#postDetail.t-purple{--mint:#8e6bc9;--edge:#8e6bc9;--edge2:#8e6bc9;--edge-soft:rgba(142,107,201,.32);--edge-soft2:rgba(142,107,201,.32);--btnBg:rgba(179,157,219,.24)}
+.card.t-peach,#postDetail.t-peach{--mint:#e8763f;--edge:#e07a4e;--edge2:#e07a4e;--edge-soft:rgba(224,122,78,.32);--edge-soft2:rgba(224,122,78,.32);--btnBg:rgba(255,183,127,.26)}
+.card.t-rose,#postDetail.t-rose{--mint:#d64a6e;--edge:#cf4f6d;--edge2:#cf4f6d;--edge-soft:rgba(207,79,109,.32);--edge-soft2:rgba(207,79,109,.32);--btnBg:rgba(255,128,171,.24)}
+.card.t-night,#postDetail.t-night{--mint:#5c8de0;--edge:#3f51b5;--edge2:#3f51b5;--edge-soft:rgba(63,81,181,.4);--edge-soft2:rgba(63,81,181,.4);--btnBg:rgba(92,107,192,.24)}
+/* 主题卡片的边框/投影优先于夜间的统一配色（同色系下仍保持所选颜色） */
+#postGrid .card[class*=" t-"]{border-color:var(--edge);box-shadow:4px 4px 0 var(--edge-soft)}
+#postGrid .card[class*=" t-"]:nth-child(even){border-color:var(--edge);box-shadow:4px 4px 0 var(--edge-soft)}
+#postGrid .card[class*=" t-"]:hover{border-color:var(--edge);box-shadow:6px 6px 0 var(--edge-soft)}
+#postGrid .card[class*=" t-"]:nth-child(even):hover{border-color:var(--edge);box-shadow:6px 6px 0 var(--edge-soft)}
+
+/* ============================================================
+   恋爱存档点 · 纪念日 / 回忆便签 / 回忆相册
+   ============================================================ */
+.love-panel:nth-child(4){border-color:var(--edge2);box-shadow:4px 4px 0 var(--edge-soft2)}
+.love-panel:nth-child(5){border-color:var(--pink);box-shadow:4px 4px 0 rgba(160,106,138,.25);
+  grid-column:2 / span 2}
+.anniv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
+.anniv{position:relative;background:rgba(255,255,255,.55);border:2px solid var(--line);
+  padding:11px 13px;transition:transform .25s,box-shadow .25s}
+body.night .anniv{background:rgba(255,255,255,.05);border-color:var(--edge-soft2)}
+.anniv:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--edge-soft2)}
+.anniv b{display:block;font-size:14.5px;letter-spacing:1px;color:var(--ink);padding-right:34px}
+.anniv time{display:block;font-size:11.5px;letter-spacing:2px;color:var(--mid);margin-top:3px}
+.anniv .d-day{display:inline-block;margin-top:7px;font-size:12.5px;font-weight:700;letter-spacing:1px;
+  padding:3px 9px;background:var(--btnBg);border:2px solid var(--edge);color:var(--ink)}
+.anniv.today .d-day{background:var(--pink);color:#fff;border-color:var(--edge2);
+  animation:beat 1.6s ease-in-out infinite}
+.anniv .a-note{margin-top:7px;font-size:12px;line-height:1.65;color:var(--mid)}
+.anniv .a-yearly{position:absolute;right:8px;top:9px;font-size:10.5px;color:var(--pink);letter-spacing:1px}
+.anniv-empty,.mem-empty{font-size:12.5px;line-height:1.8;color:var(--mid);
+  border:2px dashed var(--line);padding:16px 14px;text-align:center}
+/* —— 回忆相册 —— */
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:12px}
+.album-item{position:relative;aspect-ratio:1/1;padding:6px 6px 19px;background:#fff;
+  border:2px solid var(--edge);box-shadow:4px 4px 0 var(--edge-soft);cursor:pointer;
+  transition:transform .25s,box-shadow .25s;overflow:hidden}
+.album-item:hover{transform:translate(-2px,-2px) rotate(-1.5deg);box-shadow:6px 6px 0 var(--edge-soft)}
+.album-item img{width:100%;height:100%;object-fit:cover;display:block}
+.album-item .a-cap{position:absolute;left:5px;right:5px;bottom:3px;font-size:10.5px;color:#78909c;
+  text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.album-empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:26px 14px;border:2px dashed var(--line);color:var(--mid);font-size:13px;
+  line-height:1.8;text-align:center}
+.album-empty .spr{--s:.9;animation:beat 2s ease-in-out infinite}
+#albumLight{position:fixed;inset:0;z-index:130;background:rgba(20,26,50,.85);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:26px}
+#albumLight[hidden]{display:none}
+#albumLight img{max-width:min(88vw,760px);max-height:72vh;border:3px solid #fff;
+  box-shadow:8px 8px 0 rgba(0,0,0,.4);background:#fff}
+#albumLight .lb-cap{color:#fff;font-size:14px;letter-spacing:1.5px;text-align:center}
+#albumLight .lb-close{position:absolute;top:18px;right:22px;padding:8px 14px;background:var(--card);
+  border:2px solid var(--edge);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;
+  box-shadow:4px 4px 0 rgba(0,0,0,.35)}
+
+/* ============================================================
+   我的访客（真实到访记录）
+   ============================================================ */
+.v-nums{display:flex;gap:18px}
+.v-num b{display:block;font-size:22px;font-weight:800;color:var(--mint);
+  font-variant-numeric:tabular-nums;letter-spacing:1px}
+body.night .v-num b{color:var(--acc)}
+.v-num span{font-size:11.5px;color:var(--mid)}
+#visitorList{list-style:none;margin-top:13px;border-top:2px dashed var(--line);padding-top:9px;
+  display:flex;flex-direction:column;gap:6px;max-height:176px;overflow:auto}
+#visitorList li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--mid);line-height:1.5}
+.v-dot{width:8px;height:8px;flex:none;background:var(--mint);box-shadow:2px 2px 0 var(--edge-soft)}
+#visitorList li.is-new .v-dot{background:var(--pink)}
+.v-when{color:var(--ink);font-weight:600;flex:none}
+.v-meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.counter-note{margin-top:10px;font-size:11.5px;line-height:1.7;color:var(--mid)}
+.counter-note b{color:var(--mint);font-weight:600}
+body.night .counter-note b{color:var(--acc)}
+
+/* ============================================================
+   站长模式（写文章 / 管理内容 / 编辑回忆）
+   ============================================================ */
+#adminBtn{width:40px;height:40px;border-radius:2px;border:2px solid var(--edge);
+  background:var(--card);cursor:pointer;font-size:17px;line-height:1;color:var(--ink);flex:none;
+  transition:.2s;box-shadow:3px 3px 0 var(--edge-soft);padding:0}
+#adminBtn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--edge-soft)}
+#adminBtn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--edge-soft)}
+
+#adminMask{position:fixed;inset:0;z-index:120;background:rgba(28,36,58,.55);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  display:flex;align-items:flex-start;justify-content:center;padding:74px 16px 40px;overflow:auto}
+#adminMask[hidden]{display:none}
+.admin-box{width:min(820px,100%);background:var(--card);border:2px solid var(--edge);
+  box-shadow:8px 8px 0 var(--edge-soft);padding:20px 22px 24px;
+  animation:popIn .35s cubic-bezier(.34,1.56,.64,1) backwards}
+.admin-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.admin-head h3{font-size:19px;letter-spacing:2px;color:var(--ink);display:flex;align-items:center;gap:9px}
+.admin-head .spr{--s:.625}
+.admin-close{padding:6px 13px;border:2px solid var(--edge);background:var(--btnBg);font:inherit;
+  font-weight:700;color:var(--ink);cursor:pointer;box-shadow:3px 3px 0 var(--edge-soft)}
+.admin-close:active{transform:translate(2px,2px);box-shadow:none}
+.admin-mode{font-size:12px;letter-spacing:1px;color:var(--mid);margin-top:6px}
+.admin-mode b{color:var(--mint)}
+body.night .admin-mode b{color:var(--acc)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 14px}
+.tab{padding:7px 15px;border:2px solid var(--edge);background:var(--btnBg);font:inherit;
+  font-size:13.5px;font-weight:700;letter-spacing:1px;color:var(--ink);cursor:pointer;
+  box-shadow:3px 3px 0 var(--edge-soft)}
+.tab:hover{transform:translate(-1px,-1px)}
+.tab.on{background:var(--pink);color:#fff;border-color:var(--edge2);box-shadow:3px 3px 0 var(--edge-soft2)}
+.tab-page[hidden]{display:none}
+.field{margin-bottom:13px}
+.field>label{display:block;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--ink);margin-bottom:6px}
+.field input[type=text],.field input[type=date],.field input[type=password],.field textarea,
+.field select{width:100%;padding:9px 11px;border:2px solid var(--edge);border-radius:2px;
+  background:rgba(255,255,255,.8);font:inherit;font-size:14px;color:var(--ink);outline:none;
+  transition:border-color .2s,box-shadow .2s}
+body.night .field input,body.night .field textarea,body.night .field select,
+body.night .mrow input,body.night .mrow textarea{background:rgba(255,255,255,.09);color:var(--ink)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--edge2);
+  box-shadow:4px 4px 0 var(--edge-soft2)}
+.field .hint{font-size:11.5px;color:var(--mid);margin-top:5px;line-height:1.6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.md-tool{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.md-tool button{padding:5px 11px;border:2px solid var(--edge);background:rgba(255,255,255,.6);
+  font:inherit;font-size:12.5px;font-weight:700;color:var(--ink);cursor:pointer;
+  box-shadow:2px 2px 0 var(--edge-soft)}
+body.night .md-tool button{background:rgba(255,255,255,.09)}
+.md-tool button:active{transform:translate(2px,2px);box-shadow:none}
+#edBody{min-height:230px;line-height:1.8;resize:vertical;font-size:13.5px}
+.sw-row,.chip-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw{width:30px;height:30px;border:2px solid var(--edge);cursor:pointer;
+  box-shadow:2px 2px 0 var(--edge-soft);padding:0}
+.sw.on{outline:3px solid var(--ink);outline-offset:2px}
+.chip{padding:6px 12px;border:2px solid var(--edge);background:rgba(255,255,255,.55);font:inherit;
+  font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;box-shadow:2px 2px 0 var(--edge-soft)}
+body.night .chip{background:rgba(255,255,255,.08)}
+.chip.on{background:var(--mint);color:#fff;border-color:var(--edge)}
+.chip:active{transform:translate(2px,2px);box-shadow:none}
+.preview-box{margin-top:6px;border:2px dashed var(--line);padding:13px;background:rgba(255,255,255,.4)}
+body.night .preview-box{background:rgba(0,0,0,.18)}
+.preview-box .pv-label{font-size:12px;letter-spacing:2px;color:var(--mid);margin-bottom:9px}
+.pv-card-slot{max-width:400px}
+.pv-card-slot .card{opacity:1;transform:none;pointer-events:none}
+.pv-card-slot .card .heart{display:none}
+.pv-prose{margin-top:13px;padding-top:11px;border-top:2px dashed var(--line);font-size:14px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.btn{padding:10px 20px;border:2px solid var(--edge);background:var(--btnBg);font:inherit;
+  font-size:14px;font-weight:700;letter-spacing:1px;color:var(--ink);cursor:pointer;
+  box-shadow:4px 4px 0 var(--edge-soft);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--edge-soft)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--edge-soft)}
+.btn.primary{background:var(--mint);color:#fff}
+.btn.danger{background:rgba(244,67,54,.14);border-color:#c62828;color:#c62828}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.msg{margin-top:11px;font-size:13px;line-height:1.7;padding:9px 12px;border:2px solid var(--line);
+  background:var(--btnBg);color:var(--ink);word-break:break-all}
+.msg[hidden]{display:none}
+.msg.bad{border-color:#c62828;background:rgba(244,67,54,.12);color:#c62828}
+.msg.ok{border-color:var(--edge);background:rgba(129,199,132,.22)}
+.mlist{display:flex;flex-direction:column;gap:9px}
+.mrow{display:flex;gap:9px;align-items:flex-start;flex-wrap:wrap;padding:11px 12px;
+  border:2px solid var(--line);background:rgba(255,255,255,.5)}
+body.night .mrow{background:rgba(255,255,255,.05);border-color:var(--edge-soft2)}
+.mrow input,.mrow textarea{padding:7px 9px;border:2px solid var(--edge);
+  background:rgba(255,255,255,.85);font:inherit;font-size:13px;color:var(--ink);
+  outline:none;min-width:0}
+.mrow textarea{flex:1;min-width:160px;min-height:54px;resize:vertical;line-height:1.7}
+.mrow .f-date{width:134px;flex:none}
+.mrow .f-title{flex:1;min-width:130px}
+.mrow .f-small{width:100px;flex:none}
+.mrow .f-num{width:86px;flex:none}
+.mrow select{padding:7px 8px;border:2px solid var(--edge);background:rgba(255,255,255,.85);
+  font:inherit;font-size:13px;color:var(--ink);outline:none;flex:none;border-radius:0;
+  -webkit-appearance:none;appearance:none;cursor:pointer}
+body.night .mrow select{background:rgba(255,255,255,.09);color:var(--ink)}
+.lunar-pick{display:flex;gap:6px;align-items:center;flex-wrap:wrap;flex:none}
+.lunar-pick select{min-width:66px}
+.mrow .dim{opacity:.45}
+.mrow input:disabled,.mrow select:disabled{cursor:not-allowed}
+.mrow .del{padding:6px 11px;border:2px solid #c62828;background:rgba(244,67,54,.12);color:#c62828;
+  font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;flex:none}
+.mrow .del:active{transform:translate(2px,2px)}
+.mrow .chk{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--mid);
+  flex:none;align-self:center}
+.add-row{margin-top:10px}
+.msub{font-size:14px;font-weight:700;letter-spacing:1.5px;color:var(--ink);margin:18px 0 9px;
+  display:flex;align-items:center;gap:8px}
+.msub:first-child{margin-top:0}
+.msub::after{content:"";flex:1;height:4px;
+  background:repeating-linear-gradient(90deg,var(--edge) 0 4px,transparent 4px 8px);opacity:.5}
+.ph-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:9px;margin-top:10px}
+.ph-thumb{position:relative;aspect-ratio:1;padding:4px;background:#fff;border:2px solid var(--edge);
+  box-shadow:3px 3px 0 var(--edge-soft)}
+.ph-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-thumb .rm{position:absolute;right:-6px;top:-6px;width:22px;height:22px;border:2px solid #c62828;
+  background:#fff;color:#c62828;font-size:12px;font-weight:800;line-height:1;cursor:pointer;
+  box-shadow:2px 2px 0 rgba(0,0,0,.2)}
+.ph-thumb.new{border-color:var(--pink)}
+.ph-thumb input{position:absolute;left:3px;right:3px;bottom:3px;font-size:10px;padding:2px 3px;
+  border:1px solid var(--line);background:rgba(255,255,255,.92);color:#546e7a;outline:none;
+  text-overflow:ellipsis}
+.file-label{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border:2px dashed var(--edge);
+  background:var(--btnBg);font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer}
+.file-label input{display:none}
+.file-label:hover{transform:translate(-1px,-1px)}
+.login-wrap{display:flex;flex-direction:column;gap:13px;max-width:430px}
+.login-wrap .spr{--s:.9;align-self:center;animation:floatY 3s ease-in-out infinite}
+
+@media (max-width:960px){
+  .love-panel:nth-child(5){grid-column:auto}       /* 窄屏单列时取消横跨 */
+}
+@media (max-width:640px){
+  #adminBtn{width:34px;height:34px;font-size:15px}
+  #adminMask{padding:64px 10px 30px}
+  .admin-box{padding:16px 14px 20px;box-shadow:5px 5px 0 var(--edge-soft)}
+  .grid2{grid-template-columns:1fr}
+  .mrow .f-date{width:116px}
+  .anniv-grid{grid-template-columns:1fr 1fr}
 }
 
 /* ============================================================
@@ -858,6 +1082,7 @@ body.night .detail-nav a{color:var(--acc)}
     <a class="nav-link" href="#about">关于<span class="spr peek" data-spr="rabbit" data-day="rabbit-idle"><i class="s-rabbit-idle"></i></span></a>
     <a class="nav-link" href="#friends">友情链接<span class="spr peek" data-spr="fox" data-day="fox-idle"><i class="s-fox-idle"></i></span></a>
   </nav>
+  <button id="adminBtn" aria-label="站长模式" title="站长模式：写文章 / 管理内容">✎</button>
   <button id="themeBtn" aria-label="切换昼夜模式">
     <span class="spr i-sun"><i class="s-sun"></i></span>
     <span class="spr i-moon"><i class="s-moon"></i></span>
@@ -905,14 +1130,46 @@ body.night .detail-nav a{color:var(--acc)}
         <span class="tag">心动轨迹</span>
         <ol class="love-line" id="loveLine">
           <li data-date="2026-03-15"><span class="dot"></span><time>2026.03.15</time><b>我们在一起了</b><span class="desc">故事从这一天开始存档</span></li>
-          <li data-date="2026-06-22"><span class="dot"></span><time>2026.06.22</time><b>第 100 天</b><span class="desc">一百天快乐，甜度持续上升</span></li>
-          <li data-date="2026-09-30"><span class="dot"></span><time>2026.09.30</time><b>第 200 天</b><span class="desc">秋天里的第 200 次心动</span></li>
+          <li data-date="2026-06-22" data-days="100"><span class="dot"></span><time>2026.06.22</time><b>第 100 天</b><span class="desc">一百天快乐，甜度持续上升</span></li>
+          <li data-date="2026-09-30" data-days="200"><span class="dot"></span><time>2026.09.30</time><b>第 200 天</b><span class="desc">秋天里的第 200 次心动</span></li>
           <li data-date="2027-03-15"><span class="dot"></span><time>2027.03.15</time><b>一周年</b><span class="desc">第一个 365 天，未完待续</span></li>
+          <li data-date="2027-08-16" data-days="520"><span class="dot"></span><time>2027.08.16</time><b>第 520 天</b><span class="desc">把「我爱你」写进了进度条</span></li>
+          <li data-date="2028-03-15"><span class="dot"></span><time>2028.03.15</time><b>二周年</b><span class="desc">两年的存档，还在继续更新</span></li>
+          <li data-date="2029-10-18" data-days="1314"><span class="dot"></span><time>2029.10.18</time><b>第 1314 天</b><span class="desc">一生一世的进度条，加载中</span></li>
         </ol>
       </div>
 
       <div class="love-panel">
-        <span class="tag">糖分记录</span>
+        <span class="tag">纪念日</span>
+        <div class="anniv-grid" id="annivList">
+          <div class="anniv" data-date="2026-03-15" data-yearly="1">
+            <b>在一起纪念日</b><time>2026.03.15</time>
+            <span class="d-day">正在读取…</span>
+            <p class="a-note">每年的今天，都要认真地说一次喜欢你</p>
+            <span class="a-yearly">每年</span>
+          </div>
+          <div class="anniv" data-date="2026-09-25" data-lunar="08-15" data-yearly="1">
+            <b>中秋节</b><time>农历八月十五</time>
+            <span class="d-day">正在读取…</span>
+            <p class="a-note">月亮圆的那天，甜度也跟着满格</p>
+            <span class="a-yearly">每年</span>
+          </div>
+          <div class="anniv" data-date="2027-01-09">
+            <b>第 300 天</b><time>2027.01.09</time>
+            <span class="d-day">正在读取…</span>
+            <p class="a-note">冬天过半，糖分依旧超标</p>
+          </div>
+          <div class="anniv" data-date="2027-03-15">
+            <b>一周年</b><time>2027.03.15</time>
+            <span class="d-day">正在读取…</span>
+            <p class="a-note">第一个 365 天，未完待续</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="love-panel">
+        <span class="tag">回忆便签</span>
+        <div id="memList">
         <div class="sweet">
           <h4>存档键</h4>
           <p>2026.03.15，我把「以后的每一天都想和你一起」这个愿望，郑重地按下了存档键。</p>
@@ -925,11 +1182,29 @@ body.night .detail-nav a{color:var(--acc)}
           <h4>下一关</h4>
           <p>故事还在继续，未来的每一个存档点，我们都一个一个点亮。</p>
         </div>
+        </div>
+      </div>
+
+      <div class="love-panel">
+        <span class="tag">回忆相册</span>
+        <div class="album" id="albumGrid">
+          <div class="album-empty">
+            <span class="spr"><i class="s-heart"></i></span>
+            相册还空着……<br>进入站长模式，把照片贴进来
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 </section>
+
+<!-- 相册大图 -->
+<div id="albumLight" hidden>
+  <button class="lb-close" type="button">关闭</button>
+  <img id="lbImg" alt="回忆照片">
+  <div class="lb-cap" id="lbCap"></div>
+</div>
 
 <!-- 主体 -->
 <main class="wrap">
@@ -940,138 +1215,14 @@ body.night .detail-nav a{color:var(--acc)}
         <span class="spr" data-spr="bird" data-day="bird-idle" data-alts="bird-chirp"><i class="s-bird-idle"></i></span>
         最新文章
       </div>
-      <div class="section-sub">七篇小作文，每篇都配了一只专属小动物</div>
+      <div class="section-sub">把日子里的小事，写成一篇篇小作文</div>
       <div id="postGrid">
 
-        <article class="card" data-animal="cat" data-slug="picnic" data-key="春日野餐记 猫咪 野餐 春天 日记">
-          <span class="deco spr d-topright" data-spr="cat" data-day="cat-idle" data-react="cat-wag" data-fx="wag" data-blush="cat-blush"><i class="s-cat-idle"></i></span>
-          <button class="heart" aria-label="点赞">♥</button>
-          <div class="body">
-            <h3>春日野餐记</h3>
-            <div class="meta"><span>2026-03-21</span><span class="tag">日常</span><span class="tag">春天</span></div>
-            <p class="summary">带着小篮子去草地野餐，橘猫全程监工，最后三明治都被它叼走了一块……</p>
-            <a class="readmore" href="#/post/picnic" data-slug="picnic">阅读全文<i class="arrow"></i></a>
-          </div>
-          <div class="post-full" hidden>
-            <p>三月的风刚刚变软，我就把格子布铺在了坡顶的老橡树下。篮子里塞满了昨晚烤的面包、一小罐果酱，还有被邻居嘲笑"太朴素"的三明治——后来证明，被嘲笑是因为他们没见过橘猫监工。</p>
-            <h2>橘猫监工的一天</h2>
-            <p>它全程蹲在篮子旁边，尾巴尖有节奏地敲着野餐布，仿佛在验收工程进度。我铺桌布，它看；我摆餐具，它看；我刚把三明治拿到眼前，它看准时机……叼走了一块。</p>
-            <p>被叼走的那块里夹着蛋黄酱和生菜，它叼了两口就嫌弃地放下了，但姿势依然是胜利者的姿势。</p>
-            <blockquote>猫并不偷吃，它只是替你试毒，顺便宣布这块草地的主权。</blockquote>
-            <h2>回家的路上</h2>
-            <p>太阳落得很慢，我把剩下的面包屑撒成一条线，蚂蚁们排队来搬家。橘猫走在前面，肚皮圆滚滚，回头看了我一眼——那眼神分明在说：下周还来，监工费照旧。</p>
-          </div>
-        </article>
 
-        <article class="card" data-animal="dog" data-slug="first-code" data-key="我的第一行代码 程序员 小狗 编程 入门">
-          <span class="deco spr d-peek" data-spr="dog" data-day="dog-coder" data-react="dog-jump" data-fx="jump" data-blush="dog-blush"><i class="s-dog-coder"></i></span>
-          <button class="heart" aria-label="点赞">♥</button>
-          <div class="body">
-            <h3>我的第一行代码</h3>
-            <div class="meta"><span>2026-04-02</span><span class="tag">编程</span><span class="tag">成长</span></div>
-            <p class="summary">console.log('你好世界')——戴眼镜的小狗说，它调试到半夜终于让按钮亮了起来。</p>
-            <a class="readmore" href="#/post/first-code" data-slug="first-code">阅读全文<i class="arrow"></i></a>
-          </div>
-          <div class="post-full" hidden>
-            <p>屏幕的光是蓝色的，键盘声是凌晨两点的，我的第一行代码是这样的：</p>
-            <pre><code>console.log('你好世界');</code></pre>
-            <p>就这么一行，我卡了四个小时。分号多了、引号歪了、文件存错了目录——每一次报错都像一只戴眼镜的小狗在屏幕那头叹气。</p>
-            <h2>按钮亮起来的那一刻</h2>
-            <p>真正让我激动的不是你好世界，是后来那个按钮：点一下，背景变成薄荷绿；再点一下，变回奶油黄。我盯着它点了三十多遍，直到猫都用看傻子的眼神看我。</p>
-            <pre><code>btn.addEventListener('click', function () {
-  document.body.classList.toggle('mint');
-});</code></pre>
-            <h2>写给同样刚开始的你</h2>
-            <blockquote>bug 不是失败，是代码在用它唯一会的方式提醒你：嘿，再看我一眼。</blockquote>
-            <p>调试到半夜的终点不是成功，是你终于愿意去读那行报错——然后发现，它说的全对。</p>
-          </div>
-        </article>
 
-        <article class="card" data-animal="frog" data-slug="rainbow" data-key="雨后的彩虹 青蛙 荷叶 雨天 彩虹">
-          <button class="heart" aria-label="点赞">♥</button>
-          <div class="body">
-            <h3>雨后的彩虹<span class="deco spr d-title" data-spr="frog" data-day="frog-leaf" data-react="frog-puff" data-fx="pulse" data-blush="frog-blush"><i class="s-frog-leaf"></i></span></h3>
-            <div class="meta"><span>2026-04-18</span><span class="tag">随笔</span><span class="tag">雨天</span></div>
-            <p class="summary">青蛙顶着荷叶蹲在池塘边数水滴，数着数着，天边就挂出了一道七色的桥。</p>
-            <a class="readmore" href="#/post/rainbow" data-slug="rainbow">阅读全文<i class="arrow"></i></a>
-          </div>
-          <div class="post-full" hidden>
-            <p>雨下了整整一个上午，池塘边的青蛙顶着荷叶，把自己蹲成了一尊绿色的小雕像。</p>
-            <h2>数水滴比赛</h2>
-            <p>它在数落在荷叶上的水滴：一颗，两颗，三颗……数到第七颗的时候叶子一歪，全洒了。于是重来。我怀疑它这辈子最重要的科研项目就是这个。</p>
-            <p>雨停的时候它还没数完，但天空已经等不及了——云缝里漏出一道光，先是淡橘，再是浅金，最后哗的一下，七种颜色全挂在了池塘对面。</p>
-            <blockquote>青蛙不看彩虹。它继续数它的水滴，仿佛彩虹只是天空替它记的分。</blockquote>
-            <h2>桥的另一头</h2>
-            <p>彩虹消失得很快，快到像谁收走了一张彩色的糖纸。但池塘里的倒影多留了几分钟，青蛙终于抬起头，呱了一声——大概是给这道题打了个满分。</p>
-          </div>
-        </article>
 
-        <article class="card" data-animal="cat" data-slug="cat-diary" data-key="猫咪观察日记 胖橘猫 躺平 猫咪 观察">
-          <span class="d-corner"><span class="deco spr" data-spr="cat" data-day="cat-lie" data-react="cat-lie-wag" data-fx="wag" data-blush="cat-blush"><i class="s-cat-lie"></i></span></span>
-          <button class="heart" aria-label="点赞">♥</button>
-          <div class="body">
-            <h3>猫咪观察日记</h3>
-            <div class="meta"><span>2026-05-06</span><span class="tag">吸猫</span><span class="tag">观察</span></div>
-            <p class="summary">今日观察结论：胖橘的躺平哲学——能不动就不动，肚皮朝天就是对生活最大的诚意。</p>
-            <a class="readmore" href="#/post/cat-diary" data-slug="cat-diary">阅读全文<i class="arrow"></i></a>
-          </div>
-          <div class="post-full" hidden>
-            <p>观察对象：胖橘。观察地点：窗台第三块木板（阳光最好的位置）。观察时长：一整个下午。</p>
-            <h2>躺平的七个阶段</h2>
-            <p>第一阶段：端正坐好，四爪并拢，伪装成一只正经猫。第三阶段：身体开始横向发展，像一块被加热的黄油。第五阶段：肚皮朝天，尾巴尖规律性抽动——这是它对生活最大的诚意。</p>
-            <p>第五到第七阶段之间，它打了个哈欠，幅度大到我一度以为它要把自己吞掉。</p>
-            <blockquote>能不动就不动，不是懒，是把能量留给晚上的跑酷。</blockquote>
-            <h2>结论</h2>
-            <p>今天的观察证明：一只猫的幸福指数，与它肚皮朝天的时长成正比。明日课题：它到底能不能被叫醒。（预习答案：不能。）</p>
-          </div>
-        </article>
 
-        <article class="card" data-animal="bear" data-slug="baking" data-key="周末烘焙实验 小熊 厨师帽 烘焙 甜点">
-          <span class="d-walk"><span class="track"><span class="flip">
-            <span class="deco spr" data-spr="bear" data-day="bear-chef" data-react="bear-yawn" data-fx="pulse" data-blush="bear-blush"><i class="s-bear-chef"></i></span>
-          </span></span></span>
-          <button class="heart" aria-label="点赞">♥</button>
-          <div class="body">
-            <h3>周末烘焙实验</h3>
-            <div class="meta"><span>2026-05-24</span><span class="tag">烘焙</span><span class="tag">甜点</span></div>
-            <p class="summary">戴厨师帽的小熊把糖当成盐，烤出了一盘「惊喜口味」曲奇，但大家还是抢光了。</p>
-            <a class="readmore" href="#/post/baking" data-slug="baking">阅读全文<i class="arrow"></i></a>
-          </div>
-          <div class="post-full" hidden>
-            <p>食谱上写着：盐 2 克。我拿着勺子的手很稳，心也很稳——稳稳地挖了一大勺糖。</p>
-            <h2>「惊喜口味」的诞生</h2>
-            <p>面团揉好的时候一切正常，甚至有点过分正常。直到烤箱叮的一声，一盘颜色可疑的曲奇推门而出：边缘焦糖色，中心鼓着包，尝一口——甜到后脑勺。</p>
-            <pre><code>// 本次实验的失败配方
-盐 2g  →  糖 2g（误）
-结果：甜度 +200%，快乐 +200%</code></pre>
-            <h2>抢光的原因</h2>
-            <blockquote>难吃的菜会被剩下，太甜的曲奇会被抢光——因为每个人都想确认一下，是不是真的有这么离谱。</blockquote>
-            <p>下一周末计划：买一个带字的量勺，字要大，最好还会发光。戴厨师帽的小熊已经举手报名当试毒员。</p>
-          </div>
-        </article>
 
-        <article class="card" data-animal="owl" data-slug="night-code" data-key="深夜代码随笔 猫头鹰 睡帽 深夜 代码">
-          <span class="deco spr d-topright" data-spr="owl" data-day="owl-night" data-react="owl-blink" data-fx="" data-blush="owl-blush"><i class="s-owl-night"></i></span>
-          <button class="heart" aria-label="点赞">♥</button>
-          <div class="body">
-            <h3>深夜代码随笔</h3>
-            <div class="meta"><span>2026-06-09</span><span class="tag">代码</span><span class="tag">夜想</span></div>
-            <p class="summary">猫头鹰戴着睡帽敲下最后一行注释：夜深了，bug 会跑，但月光不会。</p>
-            <a class="readmore" href="#/post/night-code" data-slug="night-code">阅读全文<i class="arrow"></i></a>
-          </div>
-          <div class="post-full" hidden>
-            <p>00:47，窗外的路灯把树影拉得很长，猫头鹰戴着睡帽坐在显示器前，敲下了最后一行注释。</p>
-            <h2>夜里的代码会发光</h2>
-            <p>白天写的代码像白天的面包——规规矩矩。深夜写的代码却总带着点月光的偏心：命名更温柔，注释更啰嗦，连变量名都忍不住叫 sunset 而不是 color。</p>
-            <pre><code>// 夜深了，bug 会跑，但月光不会
-if (夜已深) {
-  代码.加注释('这里其实我想了很久');
-}</code></pre>
-            <h2>关于熬夜的诚实交代</h2>
-            <blockquote>修 bug 的最高境界，是第二天早上发现它自己好了——然后你怀疑人生。</blockquote>
-            <p>保存，合上笔记本，睡帽歪到一边。明天的太阳会照常升起，而今晚的这行代码，会替我先眨眼。</p>
-          </div>
-        </article>
 
         <article class="card" data-animal="rabbit" data-slug="rainy-math" data-key="雨天、数学与火鸡面 考研 数学 火鸡面 肉夹馍 雨天 兔子 日记">
           <span class="deco spr d-topright" data-spr="rabbit" data-day="rabbit-idle" data-react="rabbit-hop" data-fx="jump" data-blush="rabbit-happy"><i class="s-rabbit-idle"></i></span>
@@ -1180,7 +1331,7 @@ x = 火鸡面 + 肉夹馍
       <h4><span class="spr wi"><i class="s-sun"></i></span>今日天气</h4>
       <div class="weather-row">
         <div id="weatherSpr">
-          <span class="spr" data-spr="cat" data-day="cat-idle" data-alts="cat-idle"><i class="s-cat-idle"></i></span>
+          <span class="spr" data-spr="cat" data-day="cat-idle"><i class="s-cat-idle"></i></span>
         </div>
         <div class="weather-info">
           <div class="weather-time" id="clock">--:--:--</div>
@@ -1203,19 +1354,21 @@ x = 火鸡面 + 肉夹馍
       <p class="zoo-hint">点一下 → 对应文章发光打招呼；快速连点几只 → 全员合唱；双击 → 送去页脚排排坐。</p>
     </div>
 
-    <!-- 访客计数 -->
+    <!-- 我的访客（真实到访记录） -->
     <div class="widget" id="counterW">
-      <h4><span class="spr wi"><i class="s-hash"></i></span>访客计数</h4>
+      <h4><span class="spr wi"><i class="s-hash"></i></span>我的访客</h4>
       <div class="counter-row">
         <div class="wheel-box" id="wheelBox">
           <div class="wheel"></div>
           <span class="spr wheel-ham" data-spr="hamster" data-day="hamster-idle" data-alts="hamster-run"><i class="s-hamster-idle"></i></span>
         </div>
-        <div>
-          <div id="visitorNum">0</div>
-          <div class="counter-label">只小动物来踩过爪印</div>
+        <div class="v-nums">
+          <div class="v-num"><b id="visitorNum">0</b><span>次到访</span></div>
+          <div class="v-num"><b id="visitorUni">—</b><span>位小伙伴</span></div>
         </div>
       </div>
+      <ul id="visitorList"><li><span class="v-dot"></span><span class="v-meta">正在连接云端…</span></li></ul>
+      <p class="counter-note" id="visitorMode">正在连接云端…</p>
     </div>
   </aside>
 </main>
@@ -1266,6 +1419,121 @@ x = 火鸡面 + 肉夹馍
   <span id="chirp">啾——到家啦！</span>
   <span class="spr" data-spr="bird" data-day="bird-idle" data-alts="bird-chirp"><i class="s-bird-idle"></i></span>
 </button>
+
+<!-- ========== 站长模式（写文章 / 管理恋爱存档 / 相册） ========== -->
+<div id="adminMask" hidden>
+  <div class="admin-box" role="dialog" aria-label="站长模式">
+    <div class="admin-head">
+      <h3><span class="spr" data-spr="cat" data-day="cat-idle" data-alts="cat-wink"><i class="s-cat-idle"></i></span>站长模式</h3>
+      <button class="admin-close" type="button" id="adminClose">关闭</button>
+    </div>
+    <div class="admin-mode" id="adminMode">…</div>
+
+    <div id="loginPane">
+      <div class="login-wrap">
+        <p class="hint" id="loginHint">输入管理员密钥进入后台。</p>
+        <div class="field">
+          <label for="keyInput">管理员密钥</label>
+          <input type="password" id="keyInput" autocomplete="current-password" placeholder="ADMIN_KEY">
+        </div>
+        <div class="btn-row"><button class="btn primary" type="button" id="loginBtn">进入后台</button></div>
+        <p class="msg" id="loginMsg" hidden></p>
+      </div>
+    </div>
+
+    <div id="adminPanes" hidden>
+      <div class="tabs" role="tablist">
+        <button class="tab on" type="button" data-page="post">写文章</button>
+        <button class="tab" type="button" data-page="list">管理文章</button>
+        <button class="tab" type="button" data-page="love">恋爱存档</button>
+        <button class="tab" type="button" data-page="photo">回忆相册</button>
+      </div>
+
+      <!-- 写文章 / 编辑文章 -->
+      <div class="tab-page" id="pg-post">
+        <div class="field"><label for="edTitle">标题</label>
+          <input type="text" id="edTitle" maxlength="80" placeholder="给小作文起个名字"></div>
+        <div class="grid2">
+          <div class="field"><label for="edSlug">slug（网址片段）</label>
+            <input type="text" id="edSlug" maxlength="60" placeholder="my-first-post">
+            <div class="hint">仅小写字母、数字、横杠；留空会根据标题自动生成</div></div>
+          <div class="field"><label for="edDate">日期</label>
+            <input type="date" id="edDate"></div>
+        </div>
+        <div class="field"><label for="edTags">标签（逗号分隔，最多 4 个）</label>
+          <input type="text" id="edTags" placeholder="日常, 随笔"></div>
+        <div class="field"><label for="edSummary">摘要（卡片上的一句话）</label>
+          <input type="text" id="edSummary" maxlength="120" placeholder="留空就自动取正文第一段"></div>
+        <div class="grid2">
+          <div class="field"><label for="edAnimal">卡片小动物</label><select id="edAnimal"></select></div>
+          <div class="field"><label for="edDeco">装饰位置</label><select id="edDeco"></select></div>
+        </div>
+        <div class="field"><label>卡片主题色</label>
+          <div class="sw-row" id="edSwatches"></div></div>
+        <div class="field"><label for="edBody">正文（Markdown）</label>
+          <div class="md-tool">
+            <button type="button" data-md="h2">小标题</button>
+            <button type="button" data-md="bold">加粗</button>
+            <button type="button" data-md="code">行内码</button>
+            <button type="button" data-md="ul">列表</button>
+            <button type="button" data-md="quote">引用</button>
+            <button type="button" data-md="pre">代码块</button>
+          </div>
+          <textarea id="edBody" placeholder="## 小标题&#10;&#10;然后开始写……"></textarea>
+          <div class="hint">支持 ## 小标题 / - 列表 / &gt; 引用 / ``` 代码块 / **加粗** / `行内代码`</div>
+        </div>
+        <div class="preview-box">
+          <div class="pv-label">卡片预览</div>
+          <div class="pv-card-slot" id="edCardPreview"></div>
+          <div class="pv-label" style="margin-top:14px">正文预览</div>
+          <div class="prose pv-prose" id="edBodyPreview"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" type="button" id="edSave">保存文章</button>
+          <button class="btn ghost" type="button" id="edReset">清空重写</button>
+        </div>
+        <p class="msg" id="edMsg" hidden></p>
+      </div>
+
+      <!-- 管理文章列表 -->
+      <div class="tab-page" id="pg-list" hidden>
+        <div class="mlist" id="postAdminList"></div>
+        <div class="btn-row">
+          <button class="btn ghost" type="button" id="listNew">＋ 写一篇新的</button>
+          <button class="btn primary" type="button" id="listSave">保存标题/日期修改</button>
+        </div>
+        <p class="msg" id="listMsg" hidden></p>
+      </div>
+
+      <!-- 恋爱存档内容 -->
+      <div class="tab-page" id="pg-love" hidden>
+        <div class="msub">心动轨迹</div>
+        <div class="mlist" id="msList"></div>
+        <button class="btn ghost add-row" type="button" id="addMs">＋ 加一个存档点</button>
+
+        <div class="msub">纪念日</div>
+        <div class="mlist" id="anList"></div>
+        <button class="btn ghost add-row" type="button" id="addAn">＋ 加一个纪念日</button>
+
+        <div class="msub">回忆便签</div>
+        <div class="mlist" id="mmList"></div>
+        <button class="btn ghost add-row" type="button" id="addMm">＋ 加一张便签</button>
+
+        <div class="btn-row"><button class="btn primary" type="button" id="loveSave">保存恋爱存档</button></div>
+        <p class="msg" id="loveMsg" hidden></p>
+      </div>
+
+      <!-- 回忆相册 -->
+      <div class="tab-page" id="pg-photo" hidden>
+        <label class="file-label">＋ 选择照片<input type="file" id="phFile" accept="image/*" multiple></label>
+        <div class="hint" style="margin-top:7px">会自动压缩到最长边 1000px；单张约 1.5MB 上限，最多 60 张</div>
+        <div class="ph-thumbs" id="phThumbs"></div>
+        <div class="btn-row"><button class="btn primary" type="button" id="phSave">保存相册</button></div>
+        <p class="msg" id="phMsg" hidden></p>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 /* ============================================================
    春风像素屋 · 交互脚本（原生 JS，含注释）
@@ -1283,6 +1551,13 @@ const SLEEP = {
 };
 /* 跑动时用的帧（双击去页脚的路上） */
 const RUN = { cat: 'cat-happy', dog: 'dog-run', rabbit: 'rabbit-hop', bear: 'bear-yawn', fox: 'fox-wag' };
+
+/* 可选的小动物 / 卡片主题色 / 装饰位（站长发布文章时使用） */
+const ANIMALS = ['cat', 'dog', 'rabbit', 'fox', 'bear', 'frog', 'owl', 'hamster', 'bird'];
+const THEMES = ['pink', 'mint', 'sky', 'honey', 'purple', 'peach', 'rose', 'night'];
+const DECOS = ['d-topright', 'd-peek', 'd-title', 'd-corner', 'd-walk'];
+const THEME_NAME = { pink: '樱粉', mint: '薄荷', sky: '晴空', honey: '蜂蜜',
+  purple: '葡萄', peach: '蜜桃', rose: '玫红', night: '夜色' };
 
 /* ---------- 精灵帧控制 ---------- */
 function setFrame(el, name) {
@@ -1485,7 +1760,7 @@ for (let i = 0; i < 34; i++) {
 /* ============================================================
    文章卡片：滚动淡入 / hover 反应 / 爱心
    ============================================================ */
-const cards = $$('.card');
+let cards = $$('#postGrid .card');
 const revealIO = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -1498,8 +1773,10 @@ const revealIO = new IntersectionObserver((entries) => {
 }, { threshold: 0.18 });
 cards.forEach(c => revealIO.observe(c));
 
-cards.forEach(card => {
+function bindCard(card) {
   const spr = card.querySelector('.deco');      // 文字旁/角落里的小装饰动物
+  const heart = card.querySelector('.heart');
+  if (!spr || !heart) return;
   /* 联动1：hover 时动物做对应动作 */
   card.addEventListener('mouseenter', () => {
     setFrame(spr, spr.dataset.react);
@@ -1512,7 +1789,6 @@ cards.forEach(card => {
     setFrame(spr, baseFrame(spr));
   });
   /* 联动2：爱心变红 + 飘出小爱心 + 动物脸红 */
-  const heart = card.querySelector('.heart');
   heart.addEventListener('click', () => {
     if (!heart.classList.contains('liked')) {
       heart.classList.add('liked');
@@ -1529,7 +1805,8 @@ cards.forEach(card => {
       heart.classList.remove('liked');
     }
   });
-});
+}
+cards.forEach(bindCard);
 
 /* ============================================================
    关于我：点头像换表情
@@ -1574,13 +1851,19 @@ function getWxKey(h) {
 function tickClock() {
   const d = new Date(), p = n => (n < 10 ? '0' : '') + n;
   clockEl.textContent = p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  const night = document.body.classList.contains('night');
   const w = WX[getWxKey(d.getHours())];
-  if (wDesc.textContent !== w.desc) {          // 天气变了才动 UI
+  if (wDesc.textContent !== w.desc) {          // 天气变了才动文案
     wDesc.textContent = w.desc;
     wEquip.textContent = '装备：' + w.equip;
     tintEl.className = w.tint;
-    if (!document.body.classList.contains('night')) setFrame(weatherSpr, w.frame);
   }
+  /* 关键：把精灵的“白天常态帧”实时同步成当前天气装扮。
+     否则 refreshAllAnimals()/昼夜切换/随机动画都会用 data-day(写死的
+     cat-idle) 把荷叶伞、墨镜之类的装扮打回普通小猫 */
+  weatherSpr.dataset.day = w.frame;
+  const want = night ? WX.night.frame : w.frame;
+  if (weatherSpr.dataset.cur !== want) setFrame(weatherSpr, want);
 }
 setInterval(tickClock, 1000);
 
@@ -1685,31 +1968,118 @@ function addFooterItem(kind, name) {
 }
 
 /* ============================================================
-   访客计数：数字增长 → 仓鼠跑更快
+   我的访客：真实到访上报（云端 Cloudflare KV / 本地 localStorage）
    ============================================================ */
-const numEl = $('#visitorNum'), wheelBox = $('#wheelBox');
+const numEl = $('#visitorNum'), uniEl = $('#visitorUni'),
+      visListEl = $('#visitorList'), visModeEl = $('#visitorMode');
+const wheelBox = $('#wheelBox');
 const hamSpr = wheelBox.querySelector('.spr');
-let visitors = 8000 + Math.floor(Math.random() * 4000);
-numEl.textContent = visitors.toLocaleString('zh-CN');
-(function bumpCounter() {
+
+/* 仓鼠跑一轮（真实到访或随机卖萌时触发） */
+function runWheel() {
+  wheelBox.classList.add('fast');
+  setFrame(hamSpr, 'hamster-run');
   setTimeout(() => {
-    visitors += 1 + Math.floor(Math.random() * 3);
-    numEl.textContent = visitors.toLocaleString('zh-CN');
-    wheelBox.classList.add('fast');
-    setFrame(hamSpr, 'hamster-run');
-    setTimeout(() => {
-      wheelBox.classList.remove('fast');
-      setFrame(hamSpr, baseFrame(hamSpr));
-    }, 1800);
-    bumpCounter();
-  }, 3500 + Math.random() * 4000);
+    wheelBox.classList.remove('fast');
+    setFrame(hamSpr, baseFrame(hamSpr));
+  }, 1800);
+}
+/* 偶尔让仓鼠自己跑一圈（纯趣味，不再伪造数字） */
+(function idleWheelLoop() {
+  setTimeout(() => {
+    if (!document.hidden && !wheelBox.classList.contains('fast')) runWheel();
+    idleWheelLoop();
+  }, 9000 + Math.random() * 9000);
 })();
+
+function getVid() {
+  let vid = '';
+  try { vid = localStorage.getItem('pf-vid') || ''; } catch (e) {}
+  if (!vid) {
+    vid = 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    try { localStorage.setItem('pf-vid', vid); } catch (e) {}
+  }
+  return vid;
+}
+function fmtWhen(t) {
+  const d = new Date(t), now = new Date(), p = n => (n < 10 ? '0' : '') + n;
+  const hm = p(d.getHours()) + ':' + p(d.getMinutes());
+  const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.round((today - day) / 864e5);
+  if (diff === 0) return '今天 ' + hm;
+  if (diff === 1) return '昨天 ' + hm;
+  if (diff < 30) return diff + ' 天前 ' + hm;
+  return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + hm;
+}
+function renderVisitorStats(o) {
+  numEl.textContent = (o.total || 0).toLocaleString('zh-CN');
+  uniEl.textContent = o.unique === null || o.unique === undefined ? '—'
+    : Number(o.unique).toLocaleString('zh-CN');
+  const rows = (o.recent || []).slice(0, 8);
+  visListEl.innerHTML = rows.length ? rows.map((r, i) => {
+    const parts = [];
+    if (r.c) parts.push(r.c);
+    if (r.d) parts.push(r.d);
+    if (r.n) parts.push('第 ' + r.n + ' 次');
+    const meta = parts.join(' · ') || '神秘访客';
+    return '<li' + (i === 0 && (Date.now() - r.t) < 6e4 ? ' class="is-new"' : '') + '>' +
+      '<span class="v-dot"></span><span class="v-when">' + fmtWhen(r.t) + '</span>' +
+      '<span class="v-meta" title="' + escHtml(meta) + '">' + escHtml(meta) + '</span></li>';
+  }).join('') : '<li><span class="v-dot"></span><span class="v-meta">还没有到访记录，你是第一位吗？</span></li>';
+  visModeEl.innerHTML = o.mode || '';
+}
+
+/* 上报一次到访 */
+async function reportVisit() {
+  const vid = getVid();
+  if (Store.cloud) {
+    try {
+      const r = await apiJSON('/api/visit', {
+        method: 'POST',
+        body: JSON.stringify({ vid: vid, r: document.referrer || '' })
+      });
+      renderVisitorStats({
+        total: r.total, unique: r.unique, recent: r.recent,
+        mode: '云端统计：记录国家/设备，<b>不存 IP</b> · 你这次是第 ' +
+          (r.mine || 1) + ' 次到访'
+      });
+      runWheel();
+      return;
+    } catch (e) { /* 云端失败则退回本地记录 */ }
+  }
+  /* 本地模式：只记在这台设备上 */
+  let n = 0;
+  try {
+    n = (parseInt(localStorage.getItem('pf-visits'), 10) || 0) + 1;
+    localStorage.setItem('pf-visits', String(n));
+    let rec = [];
+    try { rec = JSON.parse(localStorage.getItem('pf-vrecent') || '[]'); } catch (e2) {}
+    rec.unshift({ t: Date.now(), c: '本机', d: guessDevice(), n: n });
+    rec = rec.slice(0, 8);
+    localStorage.setItem('pf-vrecent', JSON.stringify(rec));
+    renderVisitorStats({
+      total: n, unique: null, recent: rec,
+      mode: '本地模式：数据只记在这台设备（共到访 <b>' + n +
+        '</b> 次），连接云端后可统计所有访客'
+    });
+    runWheel();
+  } catch (e) {
+    visModeEl.textContent = '浏览器不让存数据，计数暂不可用';
+  }
+}
+function guessDevice() {
+  const ua = navigator.userAgent || '';
+  if (/iPad|Tablet/i.test(ua)) return '平板';
+  if (/Mobile|Android|iPhone/i.test(ua)) return '手机';
+  return '电脑';
+}
 
 /* ============================================================
    文章详情视图：hash 路由 #/post/xx（借鉴像素爪印的文章页）
    ============================================================ */
 const postsSec = $('#posts'), friendsSec = $('#friends'), detailSec = $('#postDetail');
-const heroSec = $('#hero');
+const heroSec = $('#hero'), loveSec = $('#love');
 const dTitle = $('#dTitle'), dMeta = $('#dMeta'), dBody = $('#dBody'), dSpr = $('#dSpr');
 const dHeart = $('#dHeart'), dViews = $('#dViews'), dPrev = $('#dPrev'), dNext = $('#dNext');
 let currentCard = null;
@@ -1732,6 +2102,9 @@ function openPost(slug) {
   const card = cardBySlug(slug);
   if (!card) { closePost(); return; }
   currentCard = card;
+  /* 阅读页跟着卡片换主题色 */
+  THEMES.forEach(t => detailSec.classList.remove('t-' + t));
+  if (card.dataset.theme) detailSec.classList.add('t-' + card.dataset.theme);
   dTitle.textContent = card.querySelector('h3').textContent.trim();
   const metaEl = card.querySelector('.meta');
   const dateEl = metaEl.querySelector('span');
@@ -1779,10 +2152,12 @@ function openPost(slug) {
     dNext.className = 'off';
     dNext.title = '';
   }
-  /* 切换到阅读视图（hero 首页横幅一并隐藏） */
+  /* 切换到阅读视图（hero 首页横幅与第二页恋爱存档点一并隐藏，
+     否则视口顶部会停在恋爱存档点而不是文章开头） */
   postsSec.hidden = true;
   friendsSec.hidden = true;
   heroSec.hidden = true;
+  loveSec.hidden = true;
   detailSec.hidden = false;
   window.scrollTo({ top: 0 });
   requestAnimationFrame(updateProgress);
@@ -1791,6 +2166,7 @@ function closePost() {
   postsSec.hidden = false;
   friendsSec.hidden = false;
   heroSec.hidden = false;
+  loveSec.hidden = false;
   detailSec.hidden = true;
   currentCard = null;
   /* 从阅读页点锚点返回：目标此前处于 hidden，浏览器可能未滚到位，补一次 */
@@ -1844,7 +2220,7 @@ input.addEventListener('mousemove', e => {
   const t = (e.clientX - r.left) / r.width;
   setFrame(searchSpr, t < 0.38 ? 'cat-lookl' : (t > 0.62 ? 'cat-lookr' : 'cat-idle'));
 });
-input.addEventListener('input', () => {
+function refreshSearchFilter() {
   const q = input.value.trim().toLowerCase();
   let n = 0;
   cards.forEach(c => {
@@ -1854,7 +2230,8 @@ input.addEventListener('input', () => {
     if (hit) n++;
   });
   $('#noResult').style.display = n ? 'none' : 'block';
-});
+}
+input.addEventListener('input', refreshSearchFilter);
 
 /* ============================================================
    回到顶部：小鸟飞上去、到了转圈叫一声
@@ -1968,9 +2345,10 @@ function tickLove() {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let countdown = '';
   $$('#loveLine li').forEach(li => {
-    const day = new Date(li.dataset.date + 'T00:00:00');
-    const diff = Math.round((day - today) / 864e5);
+    const day = new Date((li.dataset.date || '') + 'T00:00:00');
     li.classList.remove('done', 'next', 'lock');
+    if (isNaN(day)) { li.classList.add('lock'); return; }   /* 无日期的占位条目 */
+    const diff = Math.round((day - today) / 864e5);
     if (diff <= 0) li.classList.add('done');
     else if (!countdown) {
       li.classList.add('next');
@@ -1984,11 +2362,1005 @@ function tickLove() {
 tickLove();
 setInterval(tickLove, 1000);
 
+/* ============================================================
+   农历工具（1900-2100；数据表与算法源自 solarlunar，MIT 许可）
+   —— 生日 / 节日按农历过的场景：lunar 'MM-DD' + 可选闰月
+   ============================================================ */
+const LUNAR_INFO = [
+  19416,19168,42352,21717,53856,55632,91476,22176,39632,21970,19168,42422,
+  42192,53840,119381,46400,54944,44450,38320,84343,18800,42160,46261,27216,
+  27968,109396,11104,38256,21234,18800,25958,54432,59984,28309,23248,11104,
+  100067,37600,116951,51536,54432,120998,46416,22176,107956,9680,37584,53938,
+  43344,46423,27808,46416,86869,19872,42416,83315,21168,43432,59728,27296,
+  44710,43856,19296,43748,42352,21088,62051,55632,23383,22176,38608,19925,
+  19152,42192,54484,53840,54616,46400,46752,103846,38320,18864,43380,42160,
+  45690,27216,27968,44870,43872,38256,19189,18800,25776,29859,59984,27480,
+  23232,43872,38613,37600,51552,55636,54432,55888,30034,22176,43959,9680,
+  37584,51893,43344,46240,47780,44368,21977,19360,42416,86390,21168,43312,
+  31060,27296,44368,23378,19296,42726,42208,53856,60005,54576,23200,30371,
+  38608,19195,19152,42192,118966,53840,54560,56645,46496,22224,21938,18864,
+  42359,42160,43600,111189,27936,44448,84835,37744,18936,18800,25776,92326,
+  59984,27424,108228,43744,37600,53987,51552,54615,54432,55888,23893,22176,
+  42704,21972,21200,43448,43344,46240,46758,44368,21920,43940,42416,21168,
+  45683,26928,29495,27296,44368,84821,19296,42352,21732,53600,59752,54560,
+  55968,92838,22224,19168,43476,42192,53584,62034,54560
+];
+function lLeapMonth(y) { return LUNAR_INFO[y - 1900] & 0xf; }
+function lLeapDays(y) { return lLeapMonth(y) ? (LUNAR_INFO[y - 1900] & 0x10000 ? 30 : 29) : 0; }
+function lMonthDays(y, m) {
+  if (m < 1 || m > 12) return -1;
+  return LUNAR_INFO[y - 1900] & (0x10000 >> m) ? 30 : 29;
+}
+function lYearDays(y) {
+  let sum = 348;
+  const info = LUNAR_INFO[y - 1900];
+  for (let bit = 0x8000; bit >= 0x10; bit >>= 1) sum += info & bit ? 1 : 0;
+  return sum + lLeapDays(y);
+}
+/* 农历 → 公历 {y,m,d}；无效或超出 1900-2100 返回 null */
+function lunar2solar(y, m, d, isLeap) {
+  if (y < 1900 || y > 2100 || m < 1 || m > 12 || d < 1) return null;
+  const lm = lLeapMonth(y);
+  if (isLeap && lm !== m) return null;                  // 这一年没有这个闰月
+  if ((y === 2100 && m === 12 && d > 1) || (y === 1900 && m === 1 && d < 31)) return null;
+  const dim = isLeap ? lLeapDays(y) : lMonthDays(y, m); // 该农历月实际天数
+  if (d > dim) return null;
+  let offset = 0;
+  for (let i = 1900; i < y; i++) offset += lYearDays(i);
+  let leapPassed = false;
+  for (let i = 1; i < m; i++) {
+    if (!leapPassed && lm > 0 && lm <= i) { offset += lLeapDays(y); leapPassed = true; }
+    offset += lMonthDays(y, i);
+  }
+  if (isLeap) offset += lMonthDays(y, m);               // 闰月排在同名普通月之后
+  const dt = new Date((offset + d - 31) * 86400000 + Date.UTC(1900, 1, 30));
+  return { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate() };
+}
+/* 从 from（默认今天）起最近一次该农历日期（含当天）；闰月不存在的年份自动跳过 */
+function nextLunar(m, d, leap, from) {
+  const base = from ? new Date(from.getFullYear(), from.getMonth(), from.getDate()) : new Date();
+  for (let y = base.getFullYear(); y < base.getFullYear() + 4; y++) {
+    const s = lunar2solar(y, m, d, leap);
+    if (!s) continue;
+    const dt = new Date(s.y, s.m - 1, s.d);
+    if (dt >= base) return dt;
+  }
+  return null;
+}
+const LUNAR_M_CN = ['', '正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '腊'];
+const LUNAR_D_CN = ['', '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+  '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
+function lunarLabel(m, d, leap) {
+  if (!(m >= 1 && m <= 12) || !(d >= 1 && d <= 30)) return '';
+  return '农历' + (leap ? '闰' : '') + LUNAR_M_CN[m] + '月' + LUNAR_D_CN[d];
+}
+/* 解析存档里的 'MM-DD'，非法返回 null */
+function lunarParse(s) {
+  const m = /^(\d{2})-(\d{2})$/.exec(String(s || ''));
+  if (!m) return null;
+  const mo = +m[1], dd = +m[2];
+  if (mo < 1 || mo > 12 || dd < 1 || dd > 30) return null;
+  return { m: mo, d: dd };
+}
+
+/* ============================================================
+   Markdown → HTML（站长发布的文章正文；先整体转义再解析，防注入）
+   ============================================================ */
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function mdInline(s) {
+  return s.replace(/`([^`]+)`/g, (m, c) => '<code>' + c + '</code>')
+          .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+function mdToHtml(src) {
+  const lines = String(src == null ? '' : src).replace(/\r/g, '').split('\n');
+  let html = '', i = 0, list = null, buf = [];
+  const closeList = () => { if (list) { html += '</' + list + '>'; list = null; } };
+  const flushPara = () => {
+    if (buf.length) { html += '<p>' + buf.map(s => mdInline(escHtml(s))).join('<br>') + '</p>'; buf = []; }
+  };
+  const inl = arr => arr.map(s => mdInline(escHtml(s))).join('<br>');
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^```/.test(line.trim())) {
+      flushPara(); closeList();
+      i++;
+      const code = [];
+      while (i < lines.length && !/^```/.test(lines[i].trim())) { code.push(lines[i]); i++; }
+      i++;
+      html += '<pre><code>' + escHtml(code.join('\n')) + '</code></pre>';
+      continue;
+    }
+    if (!line.trim()) { flushPara(); closeList(); i++; continue; }
+    let m;
+    if ((m = line.match(/^#{2,4}\s+(.*)$/))) {
+      flushPara(); closeList();
+      html += '<h2>' + mdInline(escHtml(m[1])) + '</h2>';
+      i++; continue;
+    }
+    if ((m = line.match(/^>\s?(.*)$/))) {
+      flushPara();
+      const q = [m[1]]; i++;
+      while (i < lines.length && (m = lines[i].match(/^>\s?(.*)$/))) { q.push(m[1]); i++; }
+      closeList();
+      html += '<blockquote>' + inl(q) + '</blockquote>';
+      continue;
+    }
+    if ((m = line.match(/^[-*]\s+(.*)$/))) {
+      flushPara();
+      if (list !== 'ul') { closeList(); html += '<ul>'; list = 'ul'; }
+      html += '<li>' + mdInline(escHtml(m[1])) + '</li>';
+      i++; continue;
+    }
+    buf.push(line); i++;
+  }
+  flushPara(); closeList();
+  return html;
+}
+function summaryOf(p) {
+  if (p.summary && p.summary.trim()) return p.summary.trim();
+  const src = String(p.body || '').split('\n').map(s => s.trim())
+    .filter(s => s && !/^(```|#{1,6}\s|>|[-*]\s)/.test(s))[0] || '';
+  const t = src.replace(/[`*#>]/g, '');
+  return t.length > 58 ? t.slice(0, 58) + '…' : t;
+}
+/* 各物种卡片上 hover / 脸红时用的帧（没有的物种退回 idle） */
+const REACT_FRAME = { cat: 'cat-wink', dog: 'dog-happy', rabbit: 'rabbit-hop', fox: 'fox-wag',
+  bear: 'bear-yawn', frog: 'frog-puff', owl: 'owl-happy', hamster: 'hamster-run', bird: 'bird-chirp' };
+const BLUSH_FRAME = { cat: 'cat-blush', dog: 'dog-blush', bear: 'bear-blush', frog: 'frog-blush',
+  owl: 'owl-blush', rabbit: 'rabbit-happy', fox: 'fox-happy', hamster: 'hamster-run', bird: 'bird-chirp' };
+
+function cardHTML(p) {
+  const kind = ANIMALS.indexOf(p.animal) >= 0 ? p.animal : 'cat';
+  const deco = DECOS.indexOf(p.deco) >= 0 ? p.deco : 'd-topright';
+  const theme = p.theme && THEMES.indexOf(p.theme) >= 0 ? ' t-' + p.theme : '';
+  const react = REACT_FRAME[kind] || kind + '-idle';
+  const blush = BLUSH_FRAME[kind] || react;
+  const slug = escHtml(p.slug || 'preview');
+  return '<article class="card' + theme + '" data-animal="' + kind + '" data-slug="' + slug +
+    '" data-theme="' + escHtml(p.theme || '') + '" data-key="' +
+    escHtml((p.title || '') + ' ' + (p.tags || []).join(' ')) + '">' +
+    '<span class="deco spr ' + deco + '" data-spr="' + kind + '" data-day="' + kind + '-idle" data-react="' +
+    react + '" data-blush="' + blush + '"' + (kind === 'rabbit' ? ' data-fx="jump"' : '') +
+    '><i class="s-' + kind + '-idle"></i></span>' +
+    '<button class="heart" aria-label="点赞">♥</button>' +
+    '<div class="body"><h3>' + escHtml(p.title || '未命名') + '</h3>' +
+    '<div class="meta"><span>' + escHtml(p.date || '') + '</span>' +
+    (p.tags || []).map(t => '<span class="tag">' + escHtml(t) + '</span>').join('') + '</div>' +
+    '<p class="summary">' + escHtml(summaryOf(p)) + '</p>' +
+    '<a class="readmore" href="#/post/' + slug + '" data-slug="' + slug + '">阅读全文<i class="arrow"></i></a>' +
+    '</div><div class="post-full" hidden>' +
+    (p.bodyHtml || mdToHtml(p.body)) + '</div></article>';
+}
+function renderPosts(list) {
+  const grid = $('#postGrid'), noRes = $('#noResult');
+  Store.posts = list.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+  grid.innerHTML = Store.posts.map(cardHTML).join('');
+  grid.appendChild(noRes);
+  cards = $$('#postGrid .card');
+  cards.forEach(c => { bindCard(c); revealIO.observe(c); });
+  refreshSearchFilter();
+}
+function refreshAfterPostsChange() {
+  renderPosts(Store.posts);
+  refreshAllAnimals();
+  if (/^#\/post\//.test(location.hash)) { currentCard = null; route(); }
+}
+
+/* ============================================================
+   数据层 Store：云端 Cloudflare Worker + KV，探测失败自动本地
+   ============================================================ */
+function apiJSON(path, opts) {
+  opts = opts || {};
+  return fetch(path, {
+    method: opts.method || 'GET',
+    headers: Object.assign({ 'content-type': 'application/json' },
+      opts.key ? { 'X-Admin-Key': opts.key } : {}),
+    body: opts.body
+  }).then(async r => {
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+    return d;
+  });
+}
+const LS = {
+  get(k, fb) { try { const v = localStorage.getItem(k); return v == null ? fb : JSON.parse(v); } catch (e) { return fb; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+};
+const THEME_SW = { pink: '#e0699a', mint: '#3fa072', sky: '#3d92d6', honey: '#cd922a',
+  purple: '#8e6bc9', peach: '#e8763f', rose: '#d64a6e', night: '#5c8de0' };
+
+/* 首篇种子文章（《雨天、数学与火鸡面》的 Markdown 源文） */
+const RAINY_MD = [
+  '雨是从凌晨开始下的。不大，也不小，像老天爷拧水龙头时犹豫了一下——最终决定，今天只给考研人供水。',
+  '',
+  '## 上午：数学把我按在地上摩擦',
+  '',
+  '八点整，我翻开高数，第三章，极限。我在草稿纸上写下"设 x 趋近于……"，然后和这道题互相凝视了十分钟。它在题的那头风轻云淡，我在这头逐渐失去表情管理。',
+  '',
+  '雨声很规律，笔尖也很规律：写，错，划掉；写，错，划掉。到中午时，我的草稿纸看起来像一份被反复退稿的文学作品——满纸删改，全是遗憾。',
+  '',
+  '> 人们总说"数学不会就是不会"。今天我给它补了下半句：不会，也不耽误到点干饭。',
+  '',
+  '## 下午：雨天适合发呆，不适合做题',
+  '',
+  '窗外的雨把整条街刷成了水彩画，柳条低着头，水洼里映着灰蓝的天。世界温柔得像一首没写完的诗——而我面前的卷子，是那首诗里唯一的病句。',
+  '',
+  '三点十七分，我第 N 次算错符号。那一刻我悟了：雨下了一整天，是老天在替我给错题哭。',
+  '',
+  '```',
+  '设今日快乐为 x',
+  'x = 火鸡面 + 肉夹馍',
+  '解得 x → ∞（在胃里）',
+  '```',
+  '',
+  '## 晚上：火鸡面与肉夹馍的救赎',
+  '',
+  '傍晚雨停了一小会儿，我冲进便利店，抱回两样圣物：一桶火鸡面，一个肉夹馍。红油在灯下发光，肉夹馍的馍还烫着——那是一整天的雨里，最干燥、最滚烫的一件事。',
+  '',
+  '第一口面下去，辣意顺着舌尖一路烧到天灵盖，我嘶哈着吸气，眼泪和悔恨一起涌上来：这道题白天我要是有这么上头，早做完了。第二口肉夹馍，肥瘦相间的肉混着青椒，把辣意稳稳按了下去——一燥一稳，像极了考卷上偶尔出现的那道送分题。',
+  '',
+  '> 人间不值得，但火鸡面和肉夹馍值得。数学，明天再收拾它。',
+  '',
+  '洗完碗，雨又开始下了。我坐回书桌前，把今天的错题标了红，然后心平气和地写下明日计划：第一，搞懂极限；第二，如果搞不懂，就再去买一个肉夹馍。'
+].join('\n');
+
+function seedPosts() {
+  const card = $('#postGrid .card[data-slug]');
+  if (!card) return [];
+  const meta = card.querySelector('.meta');
+  return [{
+    slug: card.dataset.slug,
+    title: card.querySelector('h3').textContent.trim(),
+    date: (meta.querySelector('span') || {}).textContent.trim(),
+    tags: $$('.tag', meta).map(t => t.textContent.trim()),
+    summary: (card.querySelector('.summary') || {}).textContent.trim(),
+    animal: card.dataset.animal || 'rabbit',
+    theme: 'pink',
+    deco: 'd-topright',
+    body: RAINY_MD
+  }];
+}
+/* 恋爱存档的默认内容：从静态 HTML 里读出来（站长改过则以存档为准） */
+function seedLove() {
+  const grab = (sel, fn) => $$(sel).map(fn);
+  const extra = el => {
+    const o = {};
+    if (el.dataset.days) o.days = parseInt(el.dataset.days, 10) || 0;
+    if (el.dataset.lunar) o.lunar = el.dataset.lunar;
+    if (el.dataset.leap === '1') o.leap = true;
+    return o;
+  };
+  return {
+    milestones: grab('#loveLine li', li => Object.assign({
+      date: li.dataset.date || '',
+      title: (li.querySelector('b') || {}).textContent || '',
+      desc: (li.querySelector('.desc') || {}).textContent || ''
+    }, extra(li))),
+    anniversaries: grab('#annivList .anniv', a => Object.assign({
+      date: a.dataset.date || '',
+      title: (a.querySelector('b') || {}).textContent || '',
+      note: (a.querySelector('.a-note') || {}).textContent || '',
+      yearly: a.dataset.yearly === '1'
+    }, extra(a))),
+    memories: grab('#memList .sweet', s => ({
+      title: (s.querySelector('h4') || {}).textContent || '',
+      text: (s.querySelector('p') || {}).textContent || ''
+    })),
+    photos: []
+  };
+}
+
+const Store = {
+  cloud: false, adminKey: '', unlocked: false,
+  posts: [], love: null, seed: [], seeded: false,
+  async init() {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 2500);
+      const r = await fetch('/api/ping', { signal: ctrl.signal });
+      clearTimeout(timer);
+      const d = await r.json();
+      this.cloud = !!(d && d.cloud);
+    } catch (e) { this.cloud = false; }
+    try { this.adminKey = localStorage.getItem('pf-adminkey') || ''; } catch (e) {}
+    this.seed = seedPosts();              /* 此时静态卡片还在，先留底 */
+    if (this.cloud) {
+      try {
+        const d = await apiJSON('/api/posts');
+        if (Array.isArray(d.posts) && d.posts.length) this.posts = d.posts;
+        else { this.posts = this.seed.slice(); this.seeded = true; }   /* 云端为空 → 展示种子，待首次保存时写入 */
+      } catch (e) { this.posts = this.seed.slice(); }
+      try {
+        const l = await apiJSON('/api/love');
+        this.love = { milestones: l.milestones || [], anniversaries: l.anniversaries || [],
+          memories: l.memories || [], photos: l.photos || [] };
+      } catch (e) { this.love = seedLove(); }
+    } else {
+      this.posts = LS.get('pf-posts', null) || this.seed.slice();
+      this.love = LS.get('pf-love', null) || seedLove();
+    }
+    if (!this.love || typeof this.love !== 'object') this.love = seedLove();
+    if (!Array.isArray(this.love.photos)) this.love.photos = [];
+  },
+  async persistSeeded() {
+    if (!this.cloud || !this.seeded) return;
+    for (const s of this.seed)
+      await apiJSON('/api/admin/posts', { method: 'PUT', key: this.adminKey, body: JSON.stringify(s) });
+    this.seeded = false;
+  },
+  async savePost(p) {
+    const i = this.posts.findIndex(x => x.slug === p.slug);
+    if (i >= 0) this.posts[i] = p; else this.posts.push(p);
+    if (this.cloud) {
+      await this.persistSeeded();
+      await apiJSON('/api/admin/posts', { method: 'PUT', key: this.adminKey, body: JSON.stringify(p) });
+    } else if (!LS.set('pf-posts', this.posts)) {
+      throw new Error('本地存储空间不足（浏览器约 5MB），先删点照片或文章');
+    }
+  },
+  async deletePost(slug) {
+    this.posts = this.posts.filter(p => p.slug !== slug);
+    if (this.cloud) await apiJSON('/api/admin/posts/' + encodeURIComponent(slug),
+      { method: 'DELETE', key: this.adminKey });
+    else if (!LS.set('pf-posts', this.posts)) throw new Error('本地存储写入失败');
+  },
+  async persistAllPosts() {
+    if (this.cloud) {
+      await this.persistSeeded();
+      for (const p of this.posts)
+        await apiJSON('/api/admin/posts', { method: 'PUT', key: this.adminKey, body: JSON.stringify(p) });
+    } else if (!LS.set('pf-posts', this.posts)) throw new Error('本地存储空间不足');
+  },
+  async saveLove() {
+    const L = this.love;
+    if (this.cloud) {
+      await apiJSON('/api/admin/love', { method: 'PUT', key: this.adminKey,
+        body: JSON.stringify({ milestones: L.milestones, anniversaries: L.anniversaries, memories: L.memories }) });
+    } else if (!LS.set('pf-love', L)) throw new Error('本地存储空间不足');
+  },
+  async savePhotos() {
+    if (this.cloud) {
+      await apiJSON('/api/admin/photos', { method: 'PUT', key: this.adminKey,
+        body: JSON.stringify({ photos: this.love.photos }) });
+    } else if (!LS.set('pf-love', this.love)) throw new Error('本地存储空间不足（照片太多）');
+  }
+};
+
+/* ============================================================
+   恋爱存档渲染：轨迹 / 纪念日倒计时 / 便签 / 相册
+   —— 支持「在一起第 N 天」推算、农历日期（按时间升序展开）
+   ============================================================ */
+function isoDate(d) {
+  const p = n => (n < 10 ? '0' : '') + n;
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+/* 轨迹/纪念日的有效日期：天数推算 > 公历 > 农历（最近一次） */
+function msDate(m) {
+  if (m && m.days) {
+    return new Date(LOVE_START.getFullYear(), LOVE_START.getMonth(),
+      LOVE_START.getDate() + (Number(m.days) - 1));
+  }
+  if (m && m.date) {
+    const d = new Date(m.date + 'T00:00:00');
+    if (!isNaN(d)) return d;
+  }
+  const lp = lunarParse(m && m.lunar);
+  if (lp) {
+    const dt = nextLunar(lp.m, lp.d, !!(m && m.leap));
+    if (dt) return dt;
+  }
+  return null;
+}
+function sortKey(x) { const d = msDate(x); return d ? d.getTime() : 8.64e15; }
+function lunarTimeText(m) {
+  const lp = lunarParse(m.lunar);
+  return lp ? lunarLabel(lp.m, lp.d, !!m.leap) : '';
+}
+function renderLove() {
+  const L = Store.love || {};
+  /* 心动轨迹：一律按时间升序展开 */
+  const ms = (L.milestones || []).slice().sort((a, b) => sortKey(a) - sortKey(b));
+  $('#loveLine').innerHTML = ms.length ? ms.map(m => {
+    const dt = msDate(m);
+    const timeTxt = lunarTimeText(m) || (dt ? isoDate(dt).replace(/-/g, '.') : '');
+    return '<li' + (dt ? ' data-date="' + isoDate(dt) + '"' : '') +
+      (m.days ? ' data-days="' + (Number(m.days) | 0) + '"' : '') + '>' +
+      '<span class="dot"></span><time>' + escHtml(timeTxt) + '</time><b>' + escHtml(m.title) +
+      '</b><span class="desc">' + escHtml(m.desc || '') + '</span></li>';
+  }).join('') : '<li><span class="dot"></span><b>轨迹待续</b>' +
+    '<span class="desc">进站长模式，添加你们的下一个存档点</span></li>';
+  /* 纪念日：同样按时间排序；农历条目显示农历文案 */
+  const an = (L.anniversaries || []).slice().sort((a, b) => sortKey(a) - sortKey(b));
+  $('#annivList').innerHTML = an.length ? an.map(a => {
+    const lp = lunarParse(a.lunar);
+    const timeTxt = lp ? lunarLabel(lp.m, lp.d, !!a.leap)
+      : String(a.date || '').replace(/-/g, '.');
+    return '<div class="anniv" data-date="' + escHtml(a.date || '') + '"' +
+      (lp ? ' data-lunar="' + escHtml(a.lunar) + '"' : '') +
+      (a.leap && lp ? ' data-leap="1"' : '') +
+      (a.yearly ? ' data-yearly="1"' : '') + '>' +
+      '<b>' + escHtml(a.title) + '</b><time>' + escHtml(timeTxt) + '</time>' +
+      '<span class="d-day">正在读取…</span>' +
+      (a.note ? '<p class="a-note">' + escHtml(a.note) + '</p>' : '') +
+      (a.yearly ? '<span class="a-yearly">每年</span>' : '') + '</div>';
+  }).join('') : '<div class="anniv-empty">还没有纪念日，进站长模式加一个吧</div>';
+  $('#memList').innerHTML = (L.memories || []).length ? L.memories.map(m =>
+    '<div class="sweet"><h4>' + escHtml(m.title) + '</h4><p>' + escHtml(m.text || '') + '</p></div>').join('')
+    : '<div class="mem-empty">便签空空的，写一张放进来吧</div>';
+  renderPhotos(L.photos || []);
+  tickAnniv();
+}
+function renderPhotos(photos) {
+  const g = $('#albumGrid');
+  if (!photos.length) {
+    g.innerHTML = '<div class="album-empty"><span class="spr"><i class="s-heart"></i></span>' +
+      '相册还空着……<br>进入站长模式，把照片贴进来</div>';
+    return;
+  }
+  g.innerHTML = photos.map(p =>
+    '<figure class="album-item" data-src="' + escHtml(p.data) + '" data-cap="' +
+    escHtml((p.caption || '') + (p.date ? ' · ' + p.date : '')) + '">' +
+    '<img src="' + escHtml(p.data) + '" alt="' + escHtml(p.caption || '回忆照片') + '" loading="lazy">' +
+    '<figcaption class="a-cap">' + escHtml(p.caption || p.date || '回忆') + '</figcaption></figure>').join('');
+}
+/* 纪念日倒计时：
+   - 每年 + 农历（生日/中秋这类按农历过的）→ 每次重新换算成今年的公历，
+     附带显示“今年 X 月 X 日”；闰月不存在的年份自动跳到下一次
+   - 每年 + 公历 → 滚到下一个年份
+   - 一次性事件 → 就按存的日期倒数 */
+function tickAnniv() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  $$('#annivList .anniv').forEach(el => {
+    const box = el.querySelector('.d-day');
+    if (!box) return;
+    const yearly = el.dataset.yearly === '1';
+    const lp = yearly ? lunarParse(el.dataset.lunar || '') : null;
+    let target = null, extra = '';
+    if (lp) {
+      target = nextLunar(lp.m, lp.d, el.dataset.leap === '1');
+      if (target) extra = '（今年 ' + (target.getMonth() + 1) + '月' + target.getDate() + '日）';
+    } else if (el.dataset.date) {
+      const day = new Date(el.dataset.date + 'T00:00:00');
+      if (!isNaN(day)) {
+        target = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+        if (target < today && yearly) {
+          target = new Date(now.getFullYear(), day.getMonth(), day.getDate());
+          if (target < today) target = new Date(now.getFullYear() + 1, day.getMonth(), day.getDate());
+        }
+      }
+    }
+    if (!target) { box.textContent = '日期待定'; el.classList.remove('today'); return; }
+    const diff = Math.round((target - today) / 864e5);
+    el.classList.toggle('today', diff === 0);
+    box.textContent = diff === 0 ? '就是今天 ♥'
+      : diff > 0 ? '还有 ' + diff + ' 天' + extra
+      : '已经过去 ' + (-diff) + ' 天';
+  });
+}
+setInterval(tickAnniv, 60000);
+
+/* 相册大图 */
+const albumLight = $('#albumLight');
+$('#albumGrid').addEventListener('click', e => {
+  const item = e.target.closest('.album-item');
+  if (!item) return;
+  $('#lbImg').src = item.dataset.src;
+  $('#lbCap').textContent = item.dataset.cap || '';
+  albumLight.hidden = false;
+});
+albumLight.addEventListener('click', e => {
+  if (e.target.closest('.lb-close') || e.target === albumLight) albumLight.hidden = true;
+});
+
+/* ============================================================
+   站长模式：登录 → 写文章 / 管理文章 / 恋爱存档 / 回忆相册
+   ============================================================ */
+const adminMask = $('#adminMask'), loginPane = $('#loginPane'), adminPanes = $('#adminPanes');
+let panesBuilt = false, editingSlug = null, photoDraft = [];
+
+function adminShowMsg(el, text, ok) {
+  el.hidden = !text;
+  el.textContent = text || '';
+  el.className = text ? ('msg ' + (ok ? 'ok' : 'bad')) : 'msg';
+}
+function openAdmin() {
+  adminMask.hidden = false;
+  $('#adminMode').innerHTML = Store.cloud
+    ? '模式：<b>云端</b>（Cloudflare KV）' + (Store.adminKey ? ' · 密钥已记住' : '')
+    : '模式：<b>本地</b>（localStorage） · 没连上后端 /api，数据只保存在这台设备';
+  if (Store.unlocked && panesBuilt) return;
+  if (Store.unlocked) { buildPanes(); return; }
+  loginPane.hidden = false;
+  adminPanes.hidden = true;
+  $('#keyInput').value = Store.adminKey;
+  $('#loginHint').textContent = Store.cloud
+    ? '输入 Cloudflare 管理密钥（用 wrangler secret put ADMIN_KEY 设置的那个）。'
+    : '本地模式没有后端校验，随便填一个密钥即可（只用来防误触，会记在这台设备）。';
+  adminShowMsg($('#loginMsg'), '', true);
+}
+$('#adminBtn').addEventListener('click', openAdmin);
+$('#adminClose').addEventListener('click', () => { adminMask.hidden = true; });
+adminMask.addEventListener('click', e => { if (e.target === adminMask) adminMask.hidden = true; });
+addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !adminMask.hidden) albumLight.hidden = true, adminMask.hidden = true;
+});
+
+$('#loginBtn').addEventListener('click', async () => {
+  const key = $('#keyInput').value.trim();
+  const msgEl = $('#loginMsg');
+  if (!key) return adminShowMsg(msgEl, '先输入密钥');
+  if (Store.cloud) {
+    adminShowMsg(msgEl, '验证中…', true);
+    try { await apiJSON('/api/admin/ping', { key: key }); }
+    catch (e) { return adminShowMsg(msgEl, '密钥不对：' + e.message); }
+  }
+  Store.adminKey = key;
+  Store.unlocked = true;
+  try { localStorage.setItem('pf-adminkey', key); } catch (e) {}
+  buildPanes();
+});
+function buildPanes() {
+  loginPane.hidden = true;
+  adminPanes.hidden = false;
+  if (!panesBuilt) {
+    panesBuilt = true;
+    buildEditor();
+    bindAdminEvents();
+  }
+  fillEditor(Store.posts.find(p => p.slug === editingSlug) || null);
+  renderPostAdminList();
+  fillLoveEditors();
+  photoDraft = (Store.love.photos || []).map(p => Object.assign({}, p));
+  renderPhotoThumbs();
+  switchTab('post');
+}
+function switchTab(page) {
+  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.page === page));
+  ['post', 'list', 'love', 'photo'].forEach(p => { $('#pg-' + p).hidden = p !== page; });
+  if (page === 'list') renderPostAdminList();      /* 切过来时按最新数据重建 */
+}
+$$('.tab').forEach(tb => tb.addEventListener('click', () => switchTab(tb.dataset.page)));
+
+/* —— 写文章编辑器 —— */
+const ANIMAL_CN = { cat: '小猫', dog: '小狗', rabbit: '兔子', fox: '小狐', bear: '小熊',
+  frog: '青蛙', owl: '猫头鹰', hamster: '仓鼠', bird: '小鸟' };
+const DECO_CN = { 'd-topright': '卡片右上', 'd-peek': '标题探头', 'd-title': '标题旁边',
+  'd-corner': '角落里', 'd-walk': '底部散步' };
+function buildEditor() {
+  $('#edAnimal').innerHTML = ANIMALS.map(a => '<option value="' + a + '">' + ANIMAL_CN[a] + '</option>').join('');
+  $('#edDeco').innerHTML = DECOS.map(d => '<option value="' + d + '">' + DECO_CN[d] + '</option>').join('');
+  $('#edSwatches').innerHTML = THEMES.map(t =>
+    '<button type="button" class="sw" data-theme="' + t + '" title="' + THEME_NAME[t] +
+    '" style="background:' + THEME_SW[t] + '"></button>').join('');
+}
+function setSwatch(t) {
+  $$('#edSwatches .sw').forEach(b => b.classList.toggle('on', b.dataset.theme === t));
+  $('#edSwatches').dataset.cur = t;
+}
+function parseTags(s) {
+  return String(s || '').split(/[,，、;；\s]+/).map(x => x.trim()).filter(Boolean).slice(0, 4);
+}
+function draftFromEditor() {
+  return {
+    slug: ($('#edSlug').value.trim().toLowerCase() || 'preview'),
+    title: $('#edTitle').value.trim(),
+    date: $('#edDate').value || new Date().toISOString().slice(0, 10),
+    tags: parseTags($('#edTags').value),
+    summary: $('#edSummary').value.trim(),
+    animal: $('#edAnimal').value || 'cat',
+    theme: $('#edSwatches').dataset.cur || 'pink',
+    deco: $('#edDeco').value || 'd-topright',
+    body: $('#edBody').value
+  };
+}
+function fillEditor(p) {
+  editingSlug = p ? p.slug : null;
+  $('#edTitle').value = p ? p.title : '';
+  $('#edSlug').value = p ? p.slug : '';
+  $('#edDate').value = p ? p.date : new Date().toISOString().slice(0, 10);
+  $('#edTags').value = p ? (p.tags || []).join(', ') : '';
+  $('#edSummary').value = p ? (p.summary || '') : '';
+  $('#edAnimal').value = p && ANIMALS.indexOf(p.animal) >= 0 ? p.animal : 'rabbit';
+  $('#edDeco').value = p && DECOS.indexOf(p.deco) >= 0 ? p.deco : 'd-topright';
+  setSwatch(p && THEMES.indexOf(p.theme) >= 0 ? p.theme : 'pink');
+  $('#edBody').value = p ? (p.body || '') : '';
+  adminShowMsg($('#edMsg'), '', true);
+  updatePreview();
+}
+function updatePreview() {
+  const p = draftFromEditor();
+  $('#edCardPreview').innerHTML = p.title
+    ? cardHTML(p)
+    : '<p class="hint">填好标题，这里会出现卡片预览</p>';
+  $('#edBodyPreview').innerHTML = p.body.trim()
+    ? mdToHtml(p.body)
+    : '<p class="hint">正文预览会出现在这里</p>';
+}
+function insertMd(kind) {
+  const ta = $('#edBody');
+  const s = ta.selectionStart, e = ta.selectionEnd, val = ta.value, sel = val.slice(s, e);
+  const wrap = (a, b, ph) => a + (sel || ph) + b;
+  const ins = kind === 'h2' ? '## ' + (sel || '小标题')
+    : kind === 'bold' ? wrap('**', '**', '重点')
+    : kind === 'code' ? wrap('`', '`', '行内代码')
+    : kind === 'ul' ? '- ' + (sel || '列表项')
+    : kind === 'quote' ? '> ' + (sel || '引用一句')
+    : '```\n' + (sel || '代码') + '\n```';
+  ta.value = val.slice(0, s) + ins + val.slice(e);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = s + ins.length;
+  updatePreview();
+}
+function slugify(t) {
+  const base = String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '').slice(0, 44);
+  return base || 'post-' + Date.now().toString(36);
+}
+
+/* —— 管理文章列表 —— */
+function renderPostAdminList() {
+  $('#postAdminList').innerHTML = Store.posts.length ? Store.posts.map(p =>
+    '<div class="mrow" data-slug="' + escHtml(p.slug) + '">' +
+    '<input type="date" class="f-date" data-f="date" value="' + escHtml(p.date) + '">' +
+    '<input class="f-title" data-f="title" value="' + escHtml(p.title) + '">' +
+    '<button class="btn ghost" type="button" data-act="edit">编辑</button>' +
+    '<button class="del" type="button" data-act="del">删除</button>' +
+    '</div>').join('') : '<p class="hint">还没有文章，去「写文章」发一篇吧</p>';
+}
+
+/* —— 恋爱存档编辑行 —— */
+/* 农历选择器：勾上「农历」后按月/日下拉（生日、中秋这类按农历过的日子） */
+function lunarPickHTML(lunarVal, leap) {
+  const p = lunarParse(lunarVal) || { m: 0, d: 0 };
+  let mo = '<select data-f="lmonth"><option value="">月</option>';
+  for (let i = 1; i <= 12; i++)
+    mo += '<option value="' + i + '"' + (p.m === i ? ' selected' : '') + '>' + LUNAR_M_CN[i] + '月</option>';
+  mo += '</select>';
+  let dd = '<select data-f="lday"><option value="">日</option>';
+  for (let i = 1; i <= 30; i++)
+    dd += '<option value="' + i + '"' + (p.d === i ? ' selected' : '') + '>' + LUNAR_D_CN[i] + '</option>';
+  dd += '</select>';
+  return '<span class="lunar-pick">' +
+    '<label class="chk"><input type="checkbox" data-f="islunar"' + (lunarVal ? ' checked' : '') + '>农历</label>' +
+    mo + dd +
+    '<label class="chk"><input type="checkbox" data-f="isleap"' + (leap ? ' checked' : '') + '>闰</label></span>';
+}
+function msRow(m) {
+  return '<div class="mrow">' +
+    '<input type="date" class="f-date" data-f="date" value="' + escHtml(m.date || '') + '">' +
+    '<input class="f-num" data-f="days" inputmode="numeric" value="' + (m.days ? Number(m.days) : '') +
+    '" placeholder="第N天">' +
+    lunarPickHTML(m.lunar, m.leap) +
+    '<input class="f-title" data-f="title" value="' + escHtml(m.title || '') + '" placeholder="存档点标题">' +
+    '<input class="grow" data-f="desc" value="' + escHtml(m.desc || '') + '" placeholder="一句说明">' +
+    '<button class="del" type="button">删除</button></div>';
+}
+function anRow(a) {
+  return '<div class="mrow">' +
+    '<input type="date" class="f-date" data-f="date" value="' + escHtml(a.date || '') + '">' +
+    lunarPickHTML(a.lunar, a.leap) +
+    '<input class="f-title" data-f="title" value="' + escHtml(a.title || '') + '" placeholder="纪念日名称">' +
+    '<input class="grow" data-f="note" value="' + escHtml(a.note || '') + '" placeholder="备注">' +
+    '<label class="chk"><input type="checkbox" data-f="yearly"' + (a.yearly ? ' checked' : '') + '>每年</label>' +
+    '<button class="del" type="button">删除</button></div>';
+}
+function mmRow(m) {
+  return '<div class="mrow">' +
+    '<input class="f-title" data-f="title" value="' + escHtml(m.title || '') + '" placeholder="便签标题">' +
+    '<textarea class="grow" data-f="text" placeholder="写了什么糖分？">' + escHtml(m.text || '') + '</textarea>' +
+    '<button class="del" type="button">删除</button></div>';
+}
+/* 勾上「农历」后，公历日期/天数输入置灰（以农历为准） */
+function syncLunarRow(row) {
+  const cb = row.querySelector('[data-f="islunar"]');
+  const on = !!(cb && cb.checked);
+  ['date', 'days'].forEach(f => {
+    const el = row.querySelector('[data-f="' + f + '"]');
+    if (el) { el.disabled = on; el.classList.toggle('dim', on); }
+  });
+}
+function fillLoveEditors() {
+  const L = Store.love;
+  $('#msList').innerHTML = (L.milestones || []).map(msRow).join('') ||
+    '<p class="hint">还没有轨迹点。可以填公历日期、"在一起第 N 天"，或勾选农历</p>';
+  $('#anList').innerHTML = (L.anniversaries || []).map(anRow).join('') ||
+    '<p class="hint">还没有纪念日。生日/节日如果按农历过，勾上「农历」</p>';
+  $('#mmList').innerHTML = (L.memories || []).map(mmRow).join('') ||
+    '<p class="hint">还没有便签</p>';
+  $$('#msList .mrow, #anList .mrow').forEach(syncLunarRow);
+}
+const dateOk = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '');
+/* 读一行的农历勾选结果；incomplete = 勾了但月/日没选全 */
+function readLunar(row) {
+  const cb = row.querySelector('[data-f="islunar"]');
+  if (!cb || !cb.checked) return { lunar: '', leap: false };
+  const mo = row.querySelector('[data-f="lmonth"]').value;
+  const dd = row.querySelector('[data-f="lday"]').value;
+  if (!mo || !dd) return { lunar: '', leap: false, incomplete: true };
+  const p = n => (n < 10 ? '0' : '') + n;
+  return { lunar: p(+mo) + '-' + p(+dd),
+    leap: !!row.querySelector('[data-f="isleap"]').checked };
+}
+
+/* —— 相册：选图 → 压缩 → 草稿 → 保存 —— */
+function compressImg(file, maxSide, quality) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        res(cv.toDataURL('image/jpeg', quality));
+      } catch (e) { rej(new Error('压缩失败')); }
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('读不出这张图')); };
+    img.src = url;
+  });
+}
+function renderPhotoThumbs() {
+  $('#phThumbs').innerHTML = photoDraft.length ? photoDraft.map((p, i) =>
+    '<div class="ph-thumb' + (p._new ? ' new' : '') + '" data-i="' + i + '">' +
+    '<img src="' + escHtml(p.data) + '" alt="">' +
+    '<input value="' + escHtml(p.caption || '') + '" placeholder="说明" data-f="cap">' +
+    '<button class="rm" type="button" title="删除">✕</button></div>').join('')
+    : '<p class="hint">还没有照片</p>';
+}
+
+function bindAdminEvents() {
+  /* 编辑器实时预览 */
+  ['#edTitle', '#edSlug', '#edDate', '#edTags', '#edSummary', '#edBody'].forEach(sel =>
+    $(sel).addEventListener('input', updatePreview));
+  ['#edAnimal', '#edDeco'].forEach(sel => $(sel).addEventListener('change', updatePreview));
+  $('#edSwatches').addEventListener('click', e => {
+    const b = e.target.closest('.sw');
+    if (b) { setSwatch(b.dataset.theme); updatePreview(); }
+  });
+  $$('.md-tool button').forEach(b => b.addEventListener('click', () => insertMd(b.dataset.md)));
+
+  /* 保存文章 */
+  $('#edSave').addEventListener('click', async () => {
+    const msgEl = $('#edMsg'), btn = $('#edSave');
+    const title = $('#edTitle').value.trim();
+    if (!title) return adminShowMsg(msgEl, '标题还没写');
+    if (!$('#edBody').value.trim()) return adminShowMsg(msgEl, '正文还是空的');
+    let slug = $('#edSlug').value.trim().toLowerCase();
+    if (!slug) slug = slugify(title);
+    if (!/^[a-z0-9][a-z0-9-]{1,60}$/.test(slug))
+      return adminShowMsg(msgEl, 'slug 需要小写字母/数字/横杠，且至少 2 位；可以只填标题让它自动生成');
+    if (Store.posts.some(p => p.slug === slug && p.slug !== editingSlug))
+      return adminShowMsg(msgEl, '这个 slug 已经被别的文章用了');
+    const p = draftFromEditor();
+    p.slug = slug;
+    btn.disabled = true;
+    try {
+      await Store.savePost(p);
+      editingSlug = slug;
+      refreshAfterPostsChange();
+      renderPostAdminList();
+      adminShowMsg(msgEl, '已保存《' + title + '》', true);
+    } catch (e) { adminShowMsg(msgEl, '保存失败：' + e.message); }
+    finally { btn.disabled = false; }
+  });
+  $('#edReset').addEventListener('click', () => fillEditor(null));
+
+  /* 文章列表 */
+  $('#listNew').addEventListener('click', () => { switchTab('post'); fillEditor(null); });
+  $('#listSave').addEventListener('click', async () => {
+    const msgEl = $('#listMsg'), btn = $('#listSave');
+    btn.disabled = true;
+    try {
+      $$('#postAdminList .mrow').forEach(row => {
+        const p = Store.posts.find(x => x.slug === row.dataset.slug);
+        if (!p) return;
+        const t = row.querySelector('[data-f="title"]').value.trim();
+        const d = row.querySelector('[data-f="date"]').value;
+        if (t) p.title = t;
+        if (dateOk(d)) p.date = d;
+      });
+      await Store.persistAllPosts();
+      refreshAfterPostsChange();
+      renderPostAdminList();
+      adminShowMsg(msgEl, '标题/日期已保存', true);
+    } catch (e) { adminShowMsg(msgEl, '保存失败：' + e.message); }
+    finally { btn.disabled = false; }
+  });
+  $('#postAdminList').addEventListener('click', async e => {
+    const btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    const row = btn.closest('.mrow'), msgEl = $('#listMsg');
+    const slug = row.dataset.slug;
+    if (btn.dataset.act === 'edit') {
+      const p = Store.posts.find(x => x.slug === slug);
+      if (p) { switchTab('post'); fillEditor(p); }
+      return;
+    }
+    const name = row.querySelector('[data-f="title"]').value || slug;
+    if (!confirm('删除《' + name + '》？删了就找不回来了')) return;
+    try {
+      await Store.deletePost(slug);
+      refreshAfterPostsChange();
+      renderPostAdminList();
+      adminShowMsg(msgEl, '已删除《' + name + '》', true);
+    } catch (err) { adminShowMsg(msgEl, '删除失败：' + err.message); }
+  });
+
+  /* 恋爱存档编辑 */
+  $('#addMs').addEventListener('click', () =>
+    $('#msList').insertAdjacentHTML('beforeend', msRow({ date: '', title: '', desc: '' })));
+  $('#addAn').addEventListener('click', () =>
+    $('#anList').insertAdjacentHTML('beforeend', anRow({ date: '', title: '', note: '', yearly: false })));
+  $('#addMm').addEventListener('click', () =>
+    $('#mmList').insertAdjacentHTML('beforeend', mmRow({ title: '', text: '' })));
+  ['#msList', '#anList', '#mmList'].forEach(sel =>
+    $(sel).addEventListener('click', e => {
+      const del = e.target.closest('.del');
+      if (del) del.closest('.mrow').remove();
+    }));
+  /* 勾选/取消「农历」时，公历日期与天数输入联动置灰 */
+  ['#msList', '#anList'].forEach(sel =>
+    $(sel).addEventListener('change', e => {
+      const row = e.target.closest('.mrow');
+      if (row) syncLunarRow(row);
+    }));
+  $('#loveSave').addEventListener('click', async () => {
+    const msgEl = $('#loveMsg'), btn = $('#loveSave');
+    let bad = '';
+    const ms = [], an = [], mm = [];
+    /* 轨迹：公历 / 第N天 / 农历 三选一（天数与农历分别推算成公历用于排序） */
+    if (!bad) $$('#msList .mrow').forEach(row => {
+      const title = row.querySelector('[data-f="title"]').value.trim();
+      if (!title || bad) return;
+      const lv = readLunar(row);
+      if (lv.incomplete) { bad = '《' + title + '》勾了农历但月/日还没选全'; return; }
+      const daysRaw = row.querySelector('[data-f="days"]').value.trim();
+      const days = /^\d{1,5}$/.test(daysRaw) ? parseInt(daysRaw, 10) : 0;
+      let date = row.querySelector('[data-f="date"]').value;
+      if (lv.lunar) {
+        if (!date) {
+          const lp = lunarParse(lv.lunar);
+          const dt = lp && nextLunar(lp.m, lp.d, lv.leap);
+          date = dt ? isoDate(dt) : '';
+        }
+      } else if (days) date = '';
+      if (!lv.lunar && !days && !dateOk(date)) {
+        bad = '《' + title + '》要填公历日期、「第N天」或农历三者之一';
+        return;
+      }
+      const item = { date: date, title: title,
+        desc: row.querySelector('[data-f="desc"]').value.trim() };
+      if (days && !lv.lunar) item.days = days;
+      if (lv.lunar) { item.lunar = lv.lunar; if (lv.leap) item.leap = true; }
+      ms.push(item);
+    });
+    /* 纪念日：公历 / 农历 二选一 */
+    if (!bad) $$('#anList .mrow').forEach(row => {
+      const title = row.querySelector('[data-f="title"]').value.trim();
+      if (!title || bad) return;
+      const lv = readLunar(row);
+      if (lv.incomplete) { bad = '纪念日《' + title + '》勾了农历但月/日还没选全'; return; }
+      let date = row.querySelector('[data-f="date"]').value;
+      if (lv.lunar && !date) {
+        const lp = lunarParse(lv.lunar);
+        const dt = lp && nextLunar(lp.m, lp.d, lv.leap);
+        date = dt ? isoDate(dt) : '';
+      }
+      if (!lv.lunar && !dateOk(date)) {
+        bad = '纪念日《' + title + '》要填公历日期或农历日期';
+        return;
+      }
+      const item = { date: date, title: title,
+        note: row.querySelector('[data-f="note"]').value.trim(),
+        yearly: row.querySelector('[data-f="yearly"]').checked };
+      if (lv.lunar) { item.lunar = lv.lunar; if (lv.leap) item.leap = true; }
+      an.push(item);
+    });
+    if (!bad) $$('#mmList .mrow').forEach(row => {
+      const title = row.querySelector('[data-f="title"]').value.trim();
+      if (title) mm.push({ title: title,
+        text: row.querySelector('[data-f="text"]').value.trim() });
+    });
+    if (bad) return adminShowMsg(msgEl, bad);
+    btn.disabled = true;
+    try {
+      Store.love.milestones = ms;
+      Store.love.anniversaries = an;
+      Store.love.memories = mm;
+      await Store.saveLove();
+      renderLove();
+      refreshAllAnimals();
+      fillLoveEditors();
+      adminShowMsg(msgEl, '恋爱存档已保存：轨迹 ' + ms.length + ' · 纪念日 ' + an.length +
+        ' · 便签 ' + mm.length, true);
+    } catch (e) { adminShowMsg(msgEl, '保存失败：' + e.message); }
+    finally { btn.disabled = false; }
+  });
+
+  /* 相册 */
+  $('#phFile').addEventListener('change', async e => {
+    const msgEl = $('#phMsg');
+    const files = Array.prototype.slice.call(e.target.files || []);
+    if (!files.length) return;
+    adminShowMsg(msgEl, '正在压缩 ' + files.length + ' 张照片…', true);
+    let ok = 0, big = 0;
+    for (const f of files) {
+      if (photoDraft.length >= 60) { big++; break; }
+      try {
+        const data = await compressImg(f, 1000, 0.82);
+        if (data.length > 1500000) { big++; continue; }
+        photoDraft.push({ id: 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+          date: new Date().toISOString().slice(0, 10),
+          caption: f.name.replace(/\.[^.]+$/, '').slice(0, 40),
+          data: data, _new: true });
+        ok++;
+      } catch (err) { big++; }
+    }
+    renderPhotoThumbs();
+    adminShowMsg(msgEl, '已加入 ' + ok + ' 张' + (big ? '，' + big + ' 张太大或读不出被跳过' : '') +
+      '；点「保存相册」才会生效', ok > 0);
+    e.target.value = '';
+  });
+  $('#phThumbs').addEventListener('input', e => {
+    const inp = e.target.closest('[data-f="cap"]');
+    if (inp) photoDraft[+inp.closest('.ph-thumb').dataset.i].caption = inp.value;
+  });
+  $('#phThumbs').addEventListener('click', e => {
+    const rm = e.target.closest('.rm');
+    if (!rm) return;
+    photoDraft.splice(+rm.closest('.ph-thumb').dataset.i, 1);
+    renderPhotoThumbs();
+  });
+  $('#phSave').addEventListener('click', async () => {
+    const msgEl = $('#phMsg'), btn = $('#phSave');
+    btn.disabled = true;
+    try {
+      const clean = photoDraft.map(p => ({ id: p.id, date: p.date || '',
+        caption: p.caption || '', data: p.data }));
+      Store.love.photos = clean;
+      await Store.savePhotos();
+      photoDraft = clean.map(p => Object.assign({}, p));
+      renderPhotos(clean);
+      refreshAllAnimals();
+      renderPhotoThumbs();
+      adminShowMsg(msgEl, '相册已保存（' + clean.length + ' 张）', true);
+    } catch (e) { adminShowMsg(msgEl, '保存失败：' + e.message); }
+    finally { btn.disabled = false; }
+  });
+}
+
+/* ============================================================
+   初始化：拉取数据 → 渲染 → 上报到访
+   ============================================================ */
+async function boot() {
+  try {
+    await Store.init();
+    renderPosts(Store.posts);
+    renderLove();
+    /* 首屏就是文章页时，静态卡片已被替换，需要重新路由一次 */
+    if (/^#\/post\//.test(location.hash)) { currentCard = null; route(); }
+    refreshAllAnimals();
+  } catch (e) {
+    if (window.console) console.warn('boot:', e);
+  }
+  reportVisit();
+}
+
 /* ---------- 初始化 ---------- */
 refreshAllAnimals();
 tickClock();
 updateProgress();
 randomLife();
+boot();
 </script>
 </body>
 </html>

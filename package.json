@@ -1,0 +1,16 @@
+{
+  "name": "spring-pixel-house",
+  "version": "1.0.0",
+  "private": true,
+  "description": "春风像素屋 · 单文件像素游戏风博客（含 Cloudflare Worker 后端）",
+  "scripts": {
+    "serve": "node tools/serve.js 8080",
+    "test": "node tools/tests/test-worker.mjs && node tools/tests/test-blog.js && node tools/tests/test-cloud.js",
+    "check": "node --check worker.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0",
+    "solarlunar": "^3.1.0",
+    "wrangler": "^4.144.0"
+  }
+}

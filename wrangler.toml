@@ -1,5 +1,18 @@
-name = "spring-pixel-house"
+name = "anloveli"
+main = "worker.js"
 compatibility_date = "2026-09-26"
 
+# 静态资源（index.html 等）；只有 /api/* 会进 worker.js
 [assets]
 directory = "."
+run_worker_first = ["/api/*"]
+
+# 数据存储（文章 / 恋爱存档 / 相册 / 访客）
+# 首次部署前先创建命名空间，并把生成的 id 填进来：
+#   npx wrangler kv namespace create DATA
+[[kv_namespaces]]
+binding = "DATA"
+id = "038aa8fc9d6e4da6933d6227ae9b21b6"
+
+# 管理员密钥（站长模式登录口令），用 secret 设置，不要写进本文件：
+#   npx wrangler secret put ADMIN_KEY

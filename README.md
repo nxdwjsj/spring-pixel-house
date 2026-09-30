@@ -1,7 +1,7 @@
 # 春风像素屋 · 项目说明文档
 
-> 更新日期：2026-09-28
-> 交付物：`index.html`（单文件，约 1MB，零外部依赖）
+> 更新日期：2026-09-30
+> 交付物：`index.html`（单文件，约 1.1MB，零外部依赖）+ `worker.js`（Cloudflare Worker 后端，可选）
 
 ---
 
@@ -29,7 +29,7 @@
 
 ### 1.3 保留的原生交互（全部在位）
 
-导航栏动物联动 · 跑步柴犬进度条 · 英雄区兔子（点击回话）· 文章卡片 · **文章详情页（hash 路由）** · 侧栏组件（天气 / 像素动物园 / 访客计数）· 日夜切换 · 搜索框猫咪 · 飞鸟回顶 · 页脚动物 lineup + 爪印小径 · 随机生活动画（眨眼、打哈欠）· 交错入场 · 滚动淡入。
+导航栏动物联动 · 跑步柴犬进度条 · 英雄区兔子（点击回话）· 文章卡片 · **文章详情页（hash 路由）** · 侧栏组件（天气 / 像素动物园 / **我的访客**）· 日夜切换 · 搜索框猫咪 · 飞鸟回顶 · 页脚动物 lineup + 爪印小径 · 随机生活动画（眨眼、打哈欠）· 交错入场 · 滚动淡入 · **站长模式（站内发文章 / 管理恋爱存档 / 相册）**。
 
 ---
 
@@ -61,7 +61,7 @@
 - 排版借鉴前身项目"像素爪印"（butterfly 文章页）：meta 行（日期 + 标签 chips）、h2 像素方块前缀、引用块、浅底像素代码块，全部换用本项目的像素 UI 语言（2px 描边、`4px 4px 0` 实心阴影、阶梯角）。
 - 阅读量 `localStorage['pf-views']` 纯本地模拟（首开随机基数，此后每次 +1）；点赞与列表卡片**双向同步**（同一篇共享状态）。
 - 上一篇/下一篇按卡片顺序跳转，边界显示 `off`；详情页动物精灵复制自卡片 `data-spr/data-day/data-blush`，昼夜切换自动跟随。
-- 详情页打开时隐藏 `#posts`/`#friends`，滚动进度条（柴犬）基于 window scroll 自动生效；返回时若 hash 为页面锚点则补一次 `scrollIntoView`（目标此前 hidden，浏览器可能未滚到位）。
+- 详情页打开时隐藏 `#posts`/`#friends`/**`#hero`**/**`#love`**，滚动进度条（柴犬）基于 window scroll 自动生效；返回时若 hash 为页面锚点则补一次 `scrollIntoView`（目标此前 hidden，浏览器可能未滚到位）。
 
 ---
 
@@ -84,6 +84,39 @@
 | 测试产物清理（pawA/pawB/pawtest/mk-* 已删除） | ✅ |
 | **文章详情视图**（hash 路由 / 正文排版 / 上下篇 / 阅读量，借鉴像素爪印） | ✅ |
 | 详情视图 jsdom 交互测试 39 项全通过（打开/返回/直链/点赞联动/搜索回归/容错） | ✅ |
+| **修复「阅读全文」跳到恋爱存档点的 bug**（详见 3.5） | ✅ |
+| 删除 6 篇 AI 生成文章，仅保留《雨天、数学与火鸡面》 | ✅ |
+| 恋爱存档点扩展：纪念日倒计时 / 回忆便签 / 回忆相册（5 面板） | ✅ |
+| 真实访客记录（云端 KV / 本地降级双模式） | ✅ |
+| 站长模式（站内发文章、Markdown 编辑器、8 色卡片、恋爱存档与相册管理） | ✅ |
+| Cloudflare Worker 后端 `worker.js` + `wrangler.toml`（可选部署） | ✅ |
+| 三套测试 115 项全通过（前端本地 59 / 前端云端 25 / 后端 31） | ✅ |
+
+### 3.5 本轮修复与扩展（2026-09-30）
+
+**Bug 修复 · 「阅读全文」跳到恋爱存档点**
+
+- 现象：点「阅读全文」后视口顶部停在第二屏的恋爱存档点，而不是文章开头。
+- 根因：`openPost()` 隐藏了 `#posts/#friends/#hero`，但漏掉 `#love`（`min-height:100vh` 且 `display:flex`），它占据了视口顶部。
+- 修复：`openPost()` 补 `loveSec.hidden = true`、`closePost()` 补 `loveSec.hidden = false`，并新增 `#love[hidden]{display:none}`（覆盖 `.love-grid` 等 display 规则）。
+- 回归用例：`tools/tests/test-blog.js` 第 [2] 节。
+
+**内容瘦身**：删除 6 篇 AI 生成文章（野餐/第一行代码/彩虹/猫日记/烘焙/夜代码），文章区只保留《雨天、数学与火鸡面》（slug `rainy-math`），正文以 Markdown 源文存入 `RAINY_MD` 作为种子。
+
+**恋爱存档点（5 面板）**：此刻 / 心动轨迹 / **纪念日**（每条倒计时，「每年」自动滚到下一个年份，当天变「就是今天 ♥」）/ **回忆便签**（原糖分记录，可增删改）/ **回忆相册**（缩略图 + 灯箱大图）。内容由站长模式维护，云端存 KV，本地存 localStorage。
+
+**我的访客（替换原假计数）**：每次到访 `POST /api/visit` 上报自生成的 `vid`（存 `pf-vid`），云端按 vid 去重统计「总到访 / 独立访客 / 最近到访」；隐私上不存 IP，只记 `cf.country`、来源、设备类型。连不上后端时自动降级：只统计本机到访次数，UI 明确标注「本地模式」。
+
+**站长模式（导航栏 ✎ 按钮）**：密钥登录（云模式校验 `GET /api/admin/ping`；本地模式仅防误触，密钥记在 `pf-adminkey`）→ 四个页签：
+
+1. **写文章**：标题 / slug 自动生成 / 日期 / 标签 / 摘要 / 9 种动物 / 5 种装饰位 / 8 种主题色 / Markdown 正文（## 列表 引用 代码块 加粗 行内码），卡片与正文**实时预览**。
+2. **管理文章**：改标题/日期、进编辑器、删除。
+3. **恋爱存档**：轨迹 / 纪念日（含「每年」勾选）/ 回忆便签三组行内编辑。
+4. **回忆相册**：多选图片 → canvas 压缩（最长边 1000px、JPEG 0.82）→ 填说明 → 保存（单张 base64 ≤1.5MB、最多 60 张）。
+
+**数据层 `Store`**：启动时 `GET /api/ping` 探测 2.5s，成功则走云端（读写全走 Worker），失败自动降级 localStorage；云端文章为空时先展示种子文章，站长**首次保存任何文章时**把种子一并写入 KV（`seeded` 标记），避免数据丢失。
+
+**防注入**：Markdown 解析前先整体转义 HTML，正文/标题/说明等所有入 DOM 字符串均经 `escHtml()`。
 
 ### 3.2 新增：文章详情视图
 
@@ -118,32 +151,54 @@
 
 ```
 spring-pixel-house/
-├── index.html            ← 交付物：单文件博客
+├── index.html            ← 交付物：单文件博客（前端全部内容）
+├── worker.js             ← Cloudflare Worker 后端（/api/*，可选部署）
+├── wrangler.toml         ← 部署配置（assets 静态 + KV 绑定）
+├── package.json          ← 开发依赖（仅 jsdom 测试用）与 npm scripts
 ├── README.md             ← 本文档
+├── .gitignore            ← node_modules / dist / *.log
 └── tools/                ← 开发辅助（不随站点部署亦可）
     ├── gen-sprites.js    # 32×32 精灵生成器（写入 index.html 标记区）
-    ├── serve.js          # 本地静态预览服务器
+    ├── serve.js          # 本地静态预览服务器（无 /api，前端会降级本地模式）
     ├── sheet.html        # 精灵总表参考页
-    └── sprites.css       # 精灵 CSS 源/参考
+    ├── sprites.css       # 精灵 CSS 源/参考
+    └── tests/            # 回归测试（见下）
+        ├── test-blog.js   # 前端本地降级模式 59 项
+        ├── test-cloud.js  # 前端云端模式（模拟 Worker）25 项
+        └── test-worker.mjs# Worker 后端 31 项
 ```
 
-本地预览：
+本地预览与测试：
 
-```powershell
-node tools\serve.js 8080
-# 浏览器打开 http://localhost:8080/index.html
+```bash
+npm install            # 仅测试需要（jsdom），站点本身零依赖
+npm run serve          # http://localhost:8080 （本地无 /api → 自动降级 localStorage）
+npm test               # 115 项回归：31 后端 + 59 前端本地 + 25 前端云端
+npm run check          # node --check worker.js
+node tools/gen-sprites.js   # 改动精灵时重新生成（勿手改标记区）
 ```
 
 > 注意：浏览器工具不接受 `file://`，必须走 http 预览。
 
 ---
 
-## 5. 数据与状态说明
+## 5. 数据与状态说明（双模式）
 
-- **访客计数 / 点赞**：纯前端模拟。计数初始为 0（JS 模拟滚动增长），点赞为会话内状态（无持久化，刷新即恢复）。
-- **文章阅读量**：`localStorage['pf-views']`，详情页每次打开 +1，首次打开给随机基数；纯本地模拟。
-- **日夜偏好**：`localStorage['pf-night']`，当前为 `'0'`（白天）。
-- 无任何后端、无网络请求。
+前端启动时 `GET /api/ping` 探测 2.5 秒：**成功 → 云端模式**（Cloudflare Worker + KV），**失败/超时 → 本地模式**（localStorage），UI 在站长模式顶部与访客小工具里明确标注当前模式。
+
+| 数据 | 云端（KV key） | 本地（localStorage） |
+|---|---|---|
+| 文章 | `posts`（[{slug,title,date,tags,summary,body(md),animal,theme,deco}]） | `pf-posts` |
+| 恋爱存档 | `love`（{milestones,anniversaries,memories}） | `pf-love`（含 photos） |
+| 相册 | `photos`（[{id,date,caption,data(base64)}]，≤60 张、单张 ≤1.5MB） | `pf-love.photos` |
+| 访客 | `visitors`（{total,unique,recent[],vids{}}，不存 IP） | `pf-visits` + `pf-vrecent` |
+| 管理密钥 | 请求头 `X-Admin-Key` ← 环境变量 `ADMIN_KEY`（secret） | `pf-adminkey`（仅本机） |
+
+其余本地状态：`pf-vid`（访客 ID）、`pf-views`（阅读量模拟）、`pf-night`（日夜）、点赞为会话内状态。
+
+- 本地模式受浏览器约 5MB 配额限制（保存失败会提示「本地存储空间不足」）。
+- 云端文章为空时先展示种子文章《雨天、数学与火鸡面》，站长首次保存文章时种子会一并写入 KV。
+- 本地预览（`npm run serve`）没有 `/api`，因此是纯本地模式；部署到 Cloudflare 后自动切云端。
 
 ---
 
@@ -152,31 +207,34 @@ node tools\serve.js 8080
 | # | 事项 | 状态 |
 |---|---|---|
 | 1 | OpenCode 窗口手动最大化（响应式测试时被缩小，视口 532px，恢复后约 903px） | ⏳ 需用户操作 |
-| 2 | GitHub + Cloudflare Pages 部署 | ⏳ 方案见 6.1，待执行 |
+| 2 | Cloudflare 部署（Worker + KV + ADMIN_KEY） | ⏳ 步骤见 6.1，需用户执行（登录/建 KV） |
 | 3 | 是否购买自有域名 | ⏳ 待决策，建议见 6.2 |
-| 4 | （可选）清除测试点赞状态 | ✅ 已核实无需处理：点赞无持久化，计数初始为 0（见第 5 节） |
+| 4 | （可选）清除测试点赞状态 | ✅ 已核实无需处理：点赞无持久化（见第 5 节） |
+| 5 | 站长模式真实浏览器点检（发文章/相册上传视觉） | ⏳ 自动化已覆盖逻辑，视觉需部署后自查 |
 
-### 6.1 部署方案（GitHub + Cloudflare Pages）
+### 6.1 部署方案（Cloudflare Workers + KV，推荐）
 
-零构建纯静态，两步走：
+项目带 `wrangler.toml`：静态文件由 Workers Assets 提供，只有 `/api/*` 进入 `worker.js`，数据存 KV。三步：
 
-1. **推送到 GitHub**
-   ```bash
-   cd spring-pixel-house
-   git init
-   git add index.html README.md
-   git commit -m "春风像素屋：像素游戏风单文件博客"
-   # 在 GitHub 建仓库 spring-pixel-house 后：
-   git remote add origin https://github.com/<你>/spring-pixel-house.git
-   git push -u origin main
-   ```
-2. **Cloudflare Pages 接入**
-   Dashboard → Workers & Pages → Create → Pages → Connect to Git → 选仓库 →
-   Framework preset: **None**；Build command: **留空**；Output directory: **`/`（根目录）** → Deploy。
-   完成后获得 `spring-pixel-house.pages.dev` 免费域名，HTTPS 自动，带宽免费、不限流量。
-   之后每次 `git push` 自动重新部署。
+```bash
+# 0) 安装 wrangler 并登录
+npm i -g wrangler && wrangler login
 
-> 备选：不用 GitHub 也行——Pages 支持 Direct Upload（仪表盘直接拖文件夹）或 `wrangler pages deploy`。
+# 1) 创建 KV 命名空间，把输出的 id 填进 wrangler.toml 的
+#    [[kv_namespaces]] binding="DATA" id="..."
+npx wrangler kv namespace create DATA
+
+# 2) 设置管理员密钥（站长模式登录口令，别提交进仓库）
+npx wrangler secret put ADMIN_KEY
+
+# 3) 部署
+npx wrangler deploy
+# → https://spring-pixel-house.<你的子域>.workers.dev
+```
+
+部署后：打开站点应显示访客「云端统计」；点导航栏 ✎ → 输入刚才的 `ADMIN_KEY` → 即可站内发文章、编辑恋爱存档、上传相册。之后 `npx wrangler deploy` 一键更新（或接 GitHub 自动部署）。
+
+> 降级说明：即使没做上述任何步骤，把 `index.html` 丢到任何静态托管（GitHub Pages / Pages Direct Upload）也能用——前端探测不到 `/api` 会自动切到本地 localStorage 模式，只是访客统计仅限本机、内容不跨设备。
 
 ### 6.2 自有域名建议
 
@@ -188,4 +246,4 @@ node tools\serve.js 8080
 
 ## 7. 结论
 
-项目已达可交付状态：单文件、零依赖、全交互、响应式、日夜双模式，四大重构目标全部落地；唯一曾阻断交付的"爪印不绘制"问题已根因定位并修复、经像素级验证。本轮借鉴前身项目"像素爪印"补齐了**文章详情视图**（hash 路由 + 正文排版 + 上下篇 + 阅读量），39 项 jsdom 交互测试全通过，站内死链归零。下一步为部署上线（6.1）与域名决策（6.2）。
+项目已达可交付状态：单文件、零依赖、全交互、响应式、日夜双模式，四大重构目标全部落地；曾阻断交付的"爪印不绘制"问题与本轮"阅读全文跳错位置"的路由 bug 均已根因定位并修复。本轮还完成了内容瘦身（仅保留真实文章）、恋爱存档点扩展（纪念日 / 回忆便签 / 相册）、真实访客记录与站内站长模式，并补上可选的 Cloudflare Worker + KV 后端（未部署时前端自动降级 localStorage）。三套回归测试 115 项全部通过（`npm test`）。下一步为按 6.1 部署上线与域名决策（6.2）。
