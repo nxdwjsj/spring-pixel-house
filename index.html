@@ -3368,22 +3368,33 @@ function buildPanes() {
   adminPanes.hidden = false;
   if (!panesBuilt) {
     panesBuilt = true;
-    buildEditor();
-    bindAdminEvents();
+    try { buildEditor(); } catch (e) { console.error('buildEditor 失败：', e); }
+    try { bindAdminEvents(); } catch (e) { console.error('bindAdminEvents 失败：', e); }
   }
-  fillEditor(Store.posts.find(p => p.slug === editingSlug) || null);
-  renderPostAdminList();
-  fillLoveEditors();
-  photoDraft = (Store.love.photos || []).map(p => Object.assign({}, p));
-  exitPick();
-  renderPhotoThumbs();
-  renderAlbChips();
+  /* 各面板独立容错：任一面板渲染报错都不能阻断后面的相册草稿初始化，
+     否则 photoDraft 会停留在空数组，保存时整体覆盖云端导致照片丢失 */
+  const safe = (name, fn) => { try { fn(); } catch (e) { console.error(name + ' 失败：', e); } };
+  safe('fillEditor', () => fillEditor(Store.posts.find(p => p.slug === editingSlug) || null));
+  safe('renderPostAdminList', renderPostAdminList);
+  safe('fillLoveEditors', fillLoveEditors);
+  safe('initPhotoDraft', () => {
+    photoDraft = (Store.love.photos || []).map(p => Object.assign({}, p));
+    exitPick();
+    renderPhotoThumbs();
+    renderAlbChips();
+  });
   switchTab('post');
 }
 function switchTab(page) {
   $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.page === page));
   ['post', 'list', 'love', 'photo'].forEach(p => { $('#pg-' + p).hidden = p !== page; });
   if (page === 'list') renderPostAdminList();      /* 切过来时按最新数据重建 */
+  if (page === 'photo' && !photoDraft.length && (Store.love.photos || []).length) {
+    /* 兜底：草稿为空但云端已有照片（异常时序下可能发生），重新载入，避免保存时覆盖丢照片 */
+    photoDraft = Store.love.photos.map(p => Object.assign({}, p));
+    exitPick();
+    renderAlbChips();
+  }
 }
 $$('.tab').forEach(tb => tb.addEventListener('click', () => switchTab(tb.dataset.page)));
 
@@ -3856,6 +3867,13 @@ function bindAdminEvents() {
   $('#albPickCancel').addEventListener('click', exitPick);
   $('#phSave').addEventListener('click', async () => {
     const msgEl = $('#phMsg'), btn = $('#phSave');
+    /* 最后防线：草稿为空但云端已有照片时拒绝保存，防止异常时序导致全量覆盖丢照片 */
+    if (!photoDraft.length && (Store.love.photos || []).length) {
+      photoDraft = Store.love.photos.map(p => Object.assign({}, p));
+      exitPick(); renderAlbChips();
+      return adminShowMsg(msgEl, '检测到草稿没载入已有照片，已为你重新载入 ' +
+        Store.love.photos.length + ' 张，请确认后再保存');
+    }
     btn.disabled = true;
     try {
       const clean = photoDraft.map(p => ({ id: p.id, date: p.date || '',
