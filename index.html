@@ -266,10 +266,10 @@ body.night .hero-text .hint{color:var(--acc)}
 /* ---------- 第二页：恋爱存档点 ---------- */
 #love{position:relative;z-index:5;min-height:100vh;min-height:100dvh;display:flex;align-items:center;
   padding:74px 24px 84px}
-.love-wrap{max-width:1120px;margin:0 auto;width:100%}
+.love-wrap{max-width:1120px;margin:0 auto;width:100%;min-width:0}
 .love-grid{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:20px;align-items:stretch}
 .love-panel{background:var(--card);border:2px solid var(--edge);border-radius:2px;
-  box-shadow:4px 4px 0 var(--edge-soft);padding:22px 20px;position:relative}
+  box-shadow:4px 4px 0 var(--edge-soft);padding:22px 20px;position:relative;min-width:0}
 .love-panel:nth-child(2){border-color:var(--edge2);box-shadow:4px 4px 0 var(--edge-soft2)}
 .love-panel:nth-child(3){border-color:var(--pink);box-shadow:4px 4px 0 rgba(160,106,138,.25)}
 .love-panel .tag{font-size:12px;letter-spacing:3px;margin-bottom:16px;display:inline-block}
@@ -861,7 +861,8 @@ body.night .album-filters button.on{border-color:var(--acc);color:var(--acc)}
 
 /* ---------- 照片墙二级页（#album-wall） ---------- */
 #albumWall{display:block;padding:106px 24px 80px;min-height:100vh;
-  background:var(--card)}
+  background:rgba(255,255,255,.96)}
+body.night #albumWall{background:rgba(20,28,96,.96)}
 #albumWall[hidden]{display:none}
 main.wrap[hidden],#footer[hidden],#pawline[hidden],#grass[hidden]{display:none}
 .wall-wrap{max-width:1120px;margin:0 auto}
@@ -1074,7 +1075,7 @@ body.night .alb-chip{color:var(--acc);border-color:var(--acc);background:rgba(92
   .admin-box{padding:16px 14px 20px;box-shadow:5px 5px 0 var(--edge-soft)}
   .grid2{grid-template-columns:1fr}
   .mrow .f-date{width:116px}
-  .anniv-grid{grid-template-columns:1fr 1fr}
+  .anniv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
 /* ============================================================
