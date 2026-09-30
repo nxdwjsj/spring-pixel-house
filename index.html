@@ -2814,8 +2814,9 @@ function renderPhotos(photos) {
     '<figcaption class="a-cap">' + escHtml(p.caption || p.date || '回忆') + '</figcaption></figure>').join('');
 }
 /* 纪念日倒计时：
-   - 每年 + 农历（生日/中秋这类按农历过的）→ 每次重新换算成今年的公历，
-     附带显示“今年 X 月 X 日”；闰月不存在的年份自动跳到下一次
+   - 每年 + 农历（生日/中秋这类按农历过的）→ 每次重新换算成下一个目标日，
+     括号里标注相对年份（今年/明年/后年/具体年份）+ 当次公历月日；
+     闰月不存在的年份自动跳到下一次
    - 每年 + 公历 → 滚到下一个年份
    - 一次性事件 → 就按存的日期倒数 */
 function tickAnniv() {
@@ -2829,7 +2830,13 @@ function tickAnniv() {
     let target = null, extra = '';
     if (lp) {
       target = nextLunar(lp.m, lp.d, el.dataset.leap === '1');
-      if (target) extra = '（今年 ' + (target.getMonth() + 1) + '月' + target.getDate() + '日）';
+      if (target) {
+        /* 目标日可能已经跨到明年（例如农历生日在今年之后）——不能写死「今年」 */
+        const gap = target.getFullYear() - now.getFullYear();
+        const tag = gap === 0 ? '今年' : gap === 1 ? '明年' : gap === 2 ? '后年'
+          : target.getFullYear() + '年';
+        extra = '（' + tag + ' ' + (target.getMonth() + 1) + '月' + target.getDate() + '日）';
+      }
     } else if (el.dataset.date) {
       const day = new Date(el.dataset.date + 'T00:00:00');
       if (!isNaN(day)) {

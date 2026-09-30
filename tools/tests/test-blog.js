@@ -93,8 +93,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok(!!mid, '中秋挂了农历属性');
   ok(mid && mid.querySelector('time').textContent === '农历八月十五', '农历时间文案',
     mid && mid.querySelector('time').textContent);
-  ok(mid && /还有 \d+ 天（今年 \d+月\d+日）/.test(mid.querySelector('.d-day').textContent),
-    '农历倒计时带今年公历日期', mid && mid.querySelector('.d-day').textContent);
+  ok(mid && /还有 \d+ 天（(今年|明年|后年|\d{4}年) \d+月\d+日）/.test(mid.querySelector('.d-day').textContent),
+    '农历倒计时带公历年份标注', mid && mid.querySelector('.d-day').textContent);
   ok(!$('#loveNext').textContent.includes('NaN'), '下一个存档点无 NaN', $('#loveNext').textContent);
   ok(S.love.v === 2, '种子版本号 v=2（避免旧存档顶掉新种子）', 'v=' + S.love.v);
 
@@ -196,11 +196,19 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   anL.querySelector('[data-f="title"]').value = '春节';
   anL.querySelector('[data-f="note"]').value = '回外婆家';
   anL.querySelector('[data-f="yearly"]').checked = true;
+  /* 纪念日加农历生日“四月廿五”（回归：跨年时括号不能写死「今年」） */
+  $('#addAn').click();
+  const anB = $$('#anList .mrow').pop();
+  anB.querySelector('[data-f="islunar"]').checked = true;
+  anB.querySelector('[data-f="lmonth"]').value = '4';
+  anB.querySelector('[data-f="lday"]').value = '25';
+  anB.querySelector('[data-f="title"]').value = '宝宝的生日';
+  anB.querySelector('[data-f="yearly"]').checked = true;
   $('#loveSave').click();
   await sleep(300);
   ok(!$('#loveMsg').hidden && $('#loveMsg').className.includes('ok'), '存档保存成功提示',
     $('#loveMsg').textContent);
-  ok($$('#annivList .anniv').length === 6, '页面纪念日 6 条', '实际 ' + $$('#annivList .anniv').length);
+  ok($$('#annivList .anniv').length === 7, '页面纪念日 7 条', '实际 ' + $$('#annivList .anniv').length);
   const kuai = $$('#annivList .anniv').find(a => a.querySelector('b').textContent === '跨年');
   ok(!!kuai, '新纪念日已渲染');
   ok(kuai && kuai.dataset.yearly === '1', '每年标记保留');
@@ -209,15 +217,31 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     '农历纪念日已渲染（data-lunar + 每年）', spring ? spring.outerHTML.slice(0, 160) : '未找到');
   ok(spring && spring.querySelector('time').textContent === '农历正月初一', '春节农历时间文案',
     spring && spring.querySelector('time').textContent);
-  ok(spring && /还有 \d+ 天（今年 \d+月\d+日）/.test(spring.querySelector('.d-day').textContent),
-    '春节倒计时带今年公历', spring && spring.querySelector('.d-day').textContent);
+  /* 年份标签必须与目标公历年一致（用户报过：跨年了还显示「今年」） */
+  const tagOf = iso => {
+    const y = +iso.slice(0, 4), nowY = new Date().getFullYear();
+    return y === nowY ? '今年' : y === nowY + 1 ? '明年' : y === nowY + 2 ? '后年' : y + '年';
+  };
+  const ddayCheck = el => {
+    const t = el.querySelector('.d-day').textContent;
+    const m = t.match(/(今年|明年|后年|\d{4}年) (\d+)月(\d+)日/);
+    return { t: t, ok: !!m && m[1] === tagOf(el.dataset.date) &&
+      (m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0')) === el.dataset.date.slice(5) };
+  };
+  ok(spring && ddayCheck(spring).ok, '春节倒计时年份/月日与目标日一致',
+    spring && (ddayCheck(spring).t + ' vs ' + spring.dataset.date));
+  const bday = $$('#annivList .anniv').find(a => a.querySelector('b').textContent === '宝宝的生日');
+  ok(!!bday && bday.dataset.lunar === '04-25' && bday.dataset.yearly === '1',
+    '农历生日已渲染（04-25 + 每年）', bday ? bday.outerHTML.slice(0, 140) : '未找到');
+  ok(bday && ddayCheck(bday).ok, '生日倒计时跨年不写死「今年」（农历四月廿五回归）',
+    bday && (ddayCheck(bday).t + ' vs ' + bday.dataset.date));
   const ms300 = $$('#loveLine li').find(li => li.dataset.days === '300');
   ok(!!ms300 && /^\d{4}-\d{2}-\d{2}$/.test(ms300.dataset.date), '第 300 天推算出公历日期',
     ms300 ? ms300.dataset.date : '未找到');
-  ok(S.love.anniversaries.length === 6 && S.love.milestones.length === 8, 'Store 已保存',
+  ok(S.love.anniversaries.length === 7 && S.love.milestones.length === 8, 'Store 已保存',
     S.love.anniversaries.length + '/' + S.love.milestones.length);
   const saved = JSON.parse(w.localStorage.getItem('pf-love'));
-  ok(saved && saved.anniversaries.length === 6, 'localStorage 已写入 pf-love');
+  ok(saved && saved.anniversaries.length === 7, 'localStorage 已写入 pf-love');
   ok(saved && saved.anniversaries.some(a => a.lunar === '01-01') &&
     saved.milestones.some(m => m.days === 300), 'lunar / days 字段已落盘');
   ok(saved && saved.v === 2, '种子版本号 v 落盘（删除的种子不再复活）', 'v=' + (saved && saved.v));
