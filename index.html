@@ -777,7 +777,15 @@ body.night .detail-nav a{color:var(--acc)}
 .love-panel:nth-child(4){border-color:var(--edge2);box-shadow:4px 4px 0 var(--edge-soft2)}
 .love-panel:nth-child(5){border-color:var(--pink);box-shadow:4px 4px 0 rgba(160,106,138,.25);
   grid-column:2 / span 2}
-.anniv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
+/* 纪念日两栏：左=还没到，右=已过去；每组内部卡片纵向排列 */
+.anniv-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.anniv-grid.single{grid-template-columns:minmax(0,1fr);max-width:560px}
+.anniv-col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.anniv-col h5{margin:0 0 2px;font-size:12.5px;font-weight:800;letter-spacing:3px;color:var(--mid);
+  padding-bottom:6px;border-bottom:2px dashed var(--line)}
+.anniv-col.anniv-past .anniv{opacity:.82}
+.anniv-col.anniv-past h5{color:#9e9e9e}
+.anniv-grid > .anniv-empty{grid-column:1/-1}
 .anniv{position:relative;background:rgba(255,255,255,.55);border:2px solid var(--line);
   padding:11px 13px;transition:transform .25s,box-shadow .25s}
 body.night .anniv{background:rgba(255,255,255,.05);border-color:var(--edge-soft2)}
@@ -924,7 +932,8 @@ body.night .counter-note b{color:var(--acc)}
   backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
   display:flex;align-items:flex-start;justify-content:center;padding:74px 16px 40px;overflow:auto}
 #adminMask[hidden]{display:none}
-.admin-box{width:min(820px,100%);background:var(--card);border:2px solid var(--edge);
+.admin-box{width:min(820px,100%);max-width:100%;min-width:0;box-sizing:border-box;
+  background:var(--card);border:2px solid var(--edge);
   box-shadow:8px 8px 0 var(--edge-soft);padding:20px 22px 24px;
   animation:popIn .35s cubic-bezier(.34,1.56,.64,1) backwards}
 .admin-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -1024,10 +1033,12 @@ body.night .mrow select{background:rgba(255,255,255,.09);color:var(--ink)}
 .msub:first-child{margin-top:0}
 .msub::after{content:"";flex:1;height:4px;
   background:repeating-linear-gradient(90deg,var(--edge) 0 4px,transparent 4px 8px);opacity:.5}
-.ph-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:9px;margin-top:10px}
+.ph-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:9px;margin-top:10px;
+  min-width:0;max-width:100%}
 .ph-thumb{position:relative;aspect-ratio:1;padding:4px;background:#fff;border:2px solid var(--edge);
-  box-shadow:3px 3px 0 var(--edge-soft)}
-.ph-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  box-shadow:3px 3px 0 var(--edge-soft);
+  min-width:0;max-width:100%;box-sizing:border-box}
+.ph-thumb img{width:100%;height:100%;object-fit:cover;display:block;min-width:0}
 .ph-thumb .rm{position:absolute;right:-6px;top:-6px;width:22px;height:22px;border:2px solid #c62828;
   background:#fff;color:#c62828;font-size:12px;font-weight:800;line-height:1;cursor:pointer;
   box-shadow:2px 2px 0 rgba(0,0,0,.2)}
@@ -1075,7 +1086,8 @@ body.night .alb-chip{color:var(--acc);border-color:var(--acc);background:rgba(92
   .admin-box{padding:16px 14px 20px;box-shadow:5px 5px 0 var(--edge-soft)}
   .grid2{grid-template-columns:1fr}
   .mrow .f-date{width:116px}
-  .anniv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .anniv-grid{grid-template-columns:1fr}
+  .anniv-grid.single{max-width:none}
 }
 
 /* ============================================================
@@ -3080,8 +3092,11 @@ function renderLove() {
   }).join('') : '<li><span class="dot"></span><b>轨迹待续</b>' +
     '<span class="desc">进站长模式，添加你们的下一个存档点</span></li>';
   /* 纪念日：同样按时间排序；农历条目显示农历文案 */
-  const an = (L.anniversaries || []).slice().sort((a, b) => sortKey(a) - sortKey(b));
-  $('#annivList').innerHTML = an.length ? an.map(a => {
+  /* 纪念日：按「下一个目标日」分两栏——左：还没到（含今天，近→远）；右：已过去（最近→更早） */
+  const an = L.anniversaries || [];
+  const today0 = new Date();
+  const todayD = new Date(today0.getFullYear(), today0.getMonth(), today0.getDate());
+  const annivCardHTML = a => {
     const lp = lunarParse(a.lunar);
     const timeTxt = lp ? lunarLabel(lp.m, lp.d, !!a.leap)
       : String(a.date || '').replace(/-/g, '.');
@@ -3093,7 +3108,19 @@ function renderLove() {
       '<span class="d-day">正在读取…</span>' +
       (a.note ? '<p class="a-note">' + escHtml(a.note) + '</p>' : '') +
       (a.yearly ? '<span class="a-yearly">每年</span>' : '') + '</div>';
-  }).join('') : '<div class="anniv-empty">还没有纪念日，进站长模式加一个吧</div>';
+  };
+  const withT = an.map(a => ({ a: a, t: annivTarget(a, todayD) }));
+  const future = withT.filter(x => !x.t || x.t.diff >= 0)
+    .sort((x, y) => (x.t ? x.t.target.getTime() : Infinity) - (y.t ? y.t.target.getTime() : Infinity));
+  const past = withT.filter(x => x.t && x.t.diff < 0)
+    .sort((x, y) => y.t.target.getTime() - x.t.target.getTime());
+  const colHTML = (cls, title, list) => list.length
+    ? '<div class="anniv-col ' + cls + '"><h5>' + title + '</h5>' +
+      list.map(x => annivCardHTML(x.a)).join('') + '</div>' : '';
+  $('#annivList').className = 'anniv-grid' + ((future.length && past.length) ? '' : ' single');
+  $('#annivList').innerHTML = an.length
+    ? colHTML('anniv-future', '还没到', future) + colHTML('anniv-past', '已过去', past)
+    : '<div class="anniv-empty">还没有纪念日，进站长模式加一个吧</div>';
   $('#memList').innerHTML = (L.memories || []).length ? L.memories.map(m =>
     '<div class="sweet"><h4>' + escHtml(m.title) + '</h4><p>' + escHtml(m.text || '') + '</p></div>').join('')
     : '<div class="mem-empty">便签空空的，写一张放进来吧</div>';
@@ -3233,40 +3260,52 @@ startAlbumAuto();
      闰月不存在的年份自动跳到下一次
    - 每年 + 公历 → 滚到下一个年份
    - 一次性事件 → 就按存的日期倒数 */
-function tickAnniv() {
+/* 纪念日下一个目标日：每年农历 / 每年公历滚到下一年 / 一次性事件就按存的日期。
+   返回 {target:Date, diff:number, extra:string}，无法解析返回 null。
+   渲染分组与每分钟倒计时共用，保证两栏排序和卡片文案口径一致 */
+function annivTarget(a, today) {
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  today = today || new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yearly = !!a.yearly;
+  const lp = yearly ? lunarParse(a.lunar || '') : null;
+  let target = null, extra = '';
+  if (lp) {
+    target = nextLunar(lp.m, lp.d, !!a.leap);
+    if (target) {
+      /* 目标日可能已经跨到明年（例如农历生日在今年之后）——不能写死「今年」 */
+      const gap = target.getFullYear() - now.getFullYear();
+      const tag = gap === 0 ? '今年' : gap === 1 ? '明年' : gap === 2 ? '后年'
+        : target.getFullYear() + '年';
+      extra = '（' + tag + ' ' + (target.getMonth() + 1) + '月' + target.getDate() + '日）';
+    }
+  } else if (a.date) {
+    const day = new Date(a.date + 'T00:00:00');
+    if (!isNaN(day)) {
+      target = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+      if (target < today && yearly) {
+        target = new Date(now.getFullYear(), day.getMonth(), day.getDate());
+        if (target < today) target = new Date(now.getFullYear() + 1, day.getMonth(), day.getDate());
+      }
+    }
+  }
+  if (!target) return null;
+  return { target: target, diff: Math.round((target - today) / 864e5), extra: extra };
+}
+function tickAnniv() {
   $$('#annivList .anniv').forEach(el => {
     const box = el.querySelector('.d-day');
     if (!box) return;
-    const yearly = el.dataset.yearly === '1';
-    const lp = yearly ? lunarParse(el.dataset.lunar || '') : null;
-    let target = null, extra = '';
-    if (lp) {
-      target = nextLunar(lp.m, lp.d, el.dataset.leap === '1');
-      if (target) {
-        /* 目标日可能已经跨到明年（例如农历生日在今年之后）——不能写死「今年」 */
-        const gap = target.getFullYear() - now.getFullYear();
-        const tag = gap === 0 ? '今年' : gap === 1 ? '明年' : gap === 2 ? '后年'
-          : target.getFullYear() + '年';
-        extra = '（' + tag + ' ' + (target.getMonth() + 1) + '月' + target.getDate() + '日）';
-      }
-    } else if (el.dataset.date) {
-      const day = new Date(el.dataset.date + 'T00:00:00');
-      if (!isNaN(day)) {
-        target = new Date(day.getFullYear(), day.getMonth(), day.getDate());
-        if (target < today && yearly) {
-          target = new Date(now.getFullYear(), day.getMonth(), day.getDate());
-          if (target < today) target = new Date(now.getFullYear() + 1, day.getMonth(), day.getDate());
-        }
-      }
-    }
-    if (!target) { box.textContent = '日期待定'; el.classList.remove('today'); return; }
-    const diff = Math.round((target - today) / 864e5);
-    el.classList.toggle('today', diff === 0);
-    box.textContent = diff === 0 ? '就是今天 ♥'
-      : diff > 0 ? '还有 ' + diff + ' 天' + extra
-      : '已经过去 ' + (-diff) + ' 天';
+    const t = annivTarget({
+      date: el.dataset.date || '',
+      yearly: el.dataset.yearly === '1',
+      lunar: el.dataset.lunar || '',
+      leap: el.dataset.leap === '1'
+    });
+    if (!t) { box.textContent = '日期待定'; el.classList.remove('today'); return; }
+    el.classList.toggle('today', t.diff === 0);
+    box.textContent = t.diff === 0 ? '就是今天 ♥'
+      : t.diff > 0 ? '还有 ' + t.diff + ' 天' + t.extra
+      : '已经过去 ' + (-t.diff) + ' 天';
   });
 }
 setInterval(tickAnniv, 60000);
